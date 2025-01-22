@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import logo from "../..//assets/images/Group 82.png";
 import google from "../..//assets/images/Other-Pay-Method.png";
 import teamwork from "../../assets/images/teamwork.png";
@@ -8,21 +7,42 @@ import RoleSelector from "../../components/RoleSelector";
 type Role = "Business" | "Job Seeker";
 
 const SignUpPage = () => {
+  // Step 1: Create state variables for each form field
   const [role, setRole] = useState("");
-  const {
-    register,
-    handleSubmit,
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    formState: { errors },
-  } = useForm();
+  // Step 2: Create functions to handle changes for each field
+  const handleFullName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFullName(e.target.value);
+  };
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
   };
 
   const handleRoleChange = (selectedRole: Role) => {
     setRole(selectedRole);
-    console.log("Selected Role:", selectedRole);
+  };
+
+  // Step 3: Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      console.log("Passwords do not match");
+      return;
+    }
+    console.log({ fullName, email, password, role });
   };
 
   return (
@@ -52,17 +72,18 @@ const SignUpPage = () => {
               <p className="text-red-500 text-sm mt-2">Please select a role</p>
             )}
           </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-600">
                 Full Name
               </label>
               <input
-                {...register("fullName", { required: "Full Name is required" })}
+                value={fullName}
+                onChange={handleFullName}
                 type="text"
                 placeholder="Full Name"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.fullName ? "border-red-500" : "focus:ring-blue-400"
+                  !fullName ? "border-red-500" : "focus:ring-blue-400"
                 }`}
               />
             </div>
@@ -72,17 +93,12 @@ const SignUpPage = () => {
                 Email
               </label>
               <input
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                    message: "Invalid email address",
-                  },
-                })}
+                value={email}
+                onChange={handleEmail}
                 type="email"
                 placeholder="Email"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.email ? "border-red-500" : "focus:ring-blue-400"
+                  !email ? "border-red-500" : "focus:ring-blue-400"
                 }`}
               />
             </div>
@@ -92,17 +108,28 @@ const SignUpPage = () => {
                 Password
               </label>
               <input
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
+                value={password}
+                onChange={handlePassword}
                 type="password"
                 placeholder="Enter password"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.password ? "border-red-500" : "focus:ring-blue-400"
+                  !password ? "border-red-500" : "focus:ring-blue-400"
+                }`}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600">
+                Confirm Password
+              </label>
+              <input
+                value={confirmPassword}
+                onChange={handleConfirmPassword}
+                type="password"
+                placeholder="Confirm password"
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  confirmPassword !== password
+                    ? "border-red-500"
+                    : "focus:ring-blue-400"
                 }`}
               />
             </div>
