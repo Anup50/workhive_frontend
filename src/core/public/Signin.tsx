@@ -1,15 +1,28 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import logo from "../..//assets/images/Group 82.png";
+import google from "../..//assets/images/Other-Pay-Method.png";
 import teamwork from "../../assets/images/teamwork.png";
+import RoleSelector from "../../components/RoleSelector";
+
+type Role = "Business" | "Job Seeker";
 
 const SignUpPage = () => {
+  const [role, setRole] = useState("");
   const {
     register,
     handleSubmit,
+
     formState: { errors },
   } = useForm();
 
   const onSubmit = (data: any) => {
     console.log(data);
+  };
+
+  const handleRoleChange = (selectedRole: Role) => {
+    setRole(selectedRole);
+    console.log("Selected Role:", selectedRole);
   };
 
   return (
@@ -24,26 +37,20 @@ const SignUpPage = () => {
 
         <div className="w-1/2 p-8">
           <div className="text-center mb-8">
-            <img src="" alt="WorkHive Logo" className="mx-auto mb-4" />
+            <img
+              src={logo}
+              alt="WorkHive Logo"
+              className="h-28 w-auto mx-auto mb-4"
+            />
             <h2 className="text-2xl font-bold text-gray-700">
               Welcome to WorkHive!
             </h2>
           </div>
           <div className="my-6">
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                className="w-full bg-gray-200 py-2 rounded-md hover:bg-gray-300"
-              >
-                Business
-              </button>
-              <button
-                type="button"
-                className="w-full bg-gray-200 py-2 rounded-md hover:bg-gray-300"
-              >
-                Job Seeker
-              </button>
-            </div>
+            <RoleSelector onSelect={handleRoleChange} />
+            {role === "" && (
+              <p className="text-red-500 text-sm mt-2">Please select a role</p>
+            )}
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
@@ -105,6 +112,13 @@ const SignUpPage = () => {
               className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
             >
               Sign up
+            </button>
+            <button
+              type="button"
+              className="flex items-center justify-center w-full bg-black text-white py-2 rounded-md font-semibold border border-gray-300 hover:bg-gray-600"
+            >
+              <img src={google} alt="Google Logo" className="h-5 w-5 mr-4" />
+              Sign up with Google
             </button>
           </form>
           <p className="text-sm text-center text-gray-500 mt-6">
