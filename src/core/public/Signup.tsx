@@ -1,22 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {} from "react-router-dom";
+import { toast, Toaster } from "sonner";
 import logo from "../..//assets/images/Group 82.png";
 import google from "../..//assets/images/Other-Pay-Method.png";
+import { registerUser } from "../../Api";
 import teamwork from "../../assets/images/teamwork.png";
 import RoleSelector from "../../components/RoleSelector";
 
-type Role = "Business" | "Job Seeker";
-
 const SignUpPage = () => {
-  // Step 1: Create state variables for each form field
-  const [role, setRole] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [roleId, setRoleId] = useState<string | null>(null);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Step 2: Create functions to handle changes for each field
+  const data = {
+    name: name,
+    email: email,
+    password: password,
+    role: roleId,
+  };
+  useEffect(() => {
+    registerUser(data).then((res) => {
+      console.log(res);
+    });
+  }, []);
   const handleFullName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFullName(e.target.value);
+    setName(e.target.value);
   };
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,18 +41,36 @@ const SignUpPage = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const handleRoleChange = (selectedRole: Role) => {
-    setRole(selectedRole);
-  };
-
-  // Step 3: Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       console.log("Passwords do not match");
       return;
     }
-    console.log({ fullName, email, password, role });
+
+    console.log({ name, email, password, roleId });
+
+    const data = {
+      name: name,
+      email: email,
+      password: password,
+      role: roleId,
+    };
+
+    registerUser(data)
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message);
+        } else {
+          console.log(res.data);
+          toast.error("Internal Server Error");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Something went wrong! Please try again later.");
+      });
   };
 
   return (
@@ -67,10 +95,10 @@ const SignUpPage = () => {
             </h2>
           </div>
           <div className="my-6">
-            <RoleSelector onSelect={handleRoleChange} />
-            {role === "" && (
-              <p className="text-red-500 text-sm mt-2">Please select a role</p>
-            )}
+            <div>
+              <RoleSelector onSelect={(id) => setRoleId(id)} />
+              <p>Selected Role ID: {roleId}</p>
+            </div>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -78,12 +106,12 @@ const SignUpPage = () => {
                 Full Name
               </label>
               <input
-                value={fullName}
+                value={name}
                 onChange={handleFullName}
                 type="text"
                 placeholder="Full Name"
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  !fullName ? "border-red-500" : "focus:ring-blue-400"
+                  !name ? "border-red-500" : "focus:ring-blue-400"
                 }`}
               />
             </div>
@@ -139,6 +167,10 @@ const SignUpPage = () => {
               className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
             >
               Sign up
+              <Toaster
+                className="absolute right-0 transform translate-x-16transition-transform duration-300 ease-in-out"
+                richColors
+              />
             </button>
             <button
               type="button"
