@@ -1,11 +1,21 @@
-import { useState } from "react";
+import React from "react";
 
-const RoleSelector = ({ onSelect }) => {
-  const [selectedRole, setSelectedRole] = useState("");
+type RoleSelectorProps = {
+  onSelect: (roleId: string) => void;
+};
 
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-    onSelect(role); // Notify parent component about the selected role
+const RoleSelector: React.FC<RoleSelectorProps> = ({ onSelect }) => {
+  const roles = {
+    Business: "676f9a6ca2d59fd9940cf2b1",
+    JobSeeker: "676f9a7aa2d59fd9940cf2b3",
+  };
+
+  const [selectedRole, setSelectedRole] = React.useState<string | null>(null);
+
+  const handleRoleSelect = (role: keyof typeof roles) => {
+    const roleId = roles[role];
+    setSelectedRole(roleId);
+    onSelect(roleId); // Pass the roleId to the parent
   };
 
   return (
@@ -13,7 +23,7 @@ const RoleSelector = ({ onSelect }) => {
       <button
         type="button"
         className={`w-full py-2 rounded-md font-semibold ${
-          selectedRole === "Business"
+          selectedRole === roles.Business
             ? "bg-blue-500 text-white"
             : "bg-gray-200 hover:bg-gray-300"
         }`}
@@ -24,11 +34,11 @@ const RoleSelector = ({ onSelect }) => {
       <button
         type="button"
         className={`w-full py-2 rounded-md font-semibold ${
-          selectedRole === "Job Seeker"
+          selectedRole === roles.JobSeeker
             ? "bg-blue-500 text-white"
             : "bg-gray-200 hover:bg-gray-300"
         }`}
-        onClick={() => handleRoleSelect("Job Seeker")}
+        onClick={() => handleRoleSelect("JobSeeker")}
       >
         Job Seeker
       </button>
