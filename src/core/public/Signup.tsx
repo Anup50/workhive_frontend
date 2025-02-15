@@ -13,18 +13,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const data = {
-    name: name,
-    email: email,
-    password: password,
-    role: roleId,
-  };
-  useEffect(() => {
-    registerUser(data).then((res) => {
-      console.log(res);
-    });
-  }, []);
+  useEffect(() => {}, []);
   const handleFullName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
@@ -40,7 +29,6 @@ const SignUpPage = () => {
   const handleConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value);
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -76,7 +64,6 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl w-full">
-        {/* Left Side (Illustration) */}
         <div className="w-1/2 bg-blue-300 flex items-center justify-center">
           <div className="p-8">
             <img src={teamwork} alt="bob" className="h-72 mx-auto" />
