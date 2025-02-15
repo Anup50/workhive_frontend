@@ -134,14 +134,16 @@
 // export default SignInPage;
 import { useState } from "react";
 import { toast } from "sonner";
-import logo from "../..//assets/images/Group 82.png";
-import google from "../..//assets/images/Other-Pay-Method.png";
 import { loginUser } from "../../Api";
+import logo from "../../assets/images/Group 82.png";
+import google from "../../assets/images/Other-Pay-Method.png";
 import signinimage from "../../assets/images/undraw_business_deal_re_up4u 2.png";
+import { useAuth } from "../../context/AuthContext";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -155,15 +157,23 @@ const SignInPage = () => {
     e.preventDefault();
     console.log({ email, password });
 
-    const data = {
-      email: email,
-      password: password,
-    };
+    const data = { email, password };
 
     loginUser(data)
       .then((res) => {
         if (res.status === 200) {
           toast.success(res.data.message);
+          // Assuming your API returns token and role.
+          // If no full user object is provided, you can create one or use the email as an identifier.
+          login(
+            {
+              email,
+              id: "",
+              name: "",
+            },
+            res.data.token,
+            res.data.role
+          );
         } else {
           console.log(res.data);
           toast.error("Internal Server Error");
@@ -181,10 +191,15 @@ const SignInPage = () => {
         {/* Left Side (Illustration) */}
         <div className="w-1/2 bg-blue-300 flex items-center justify-center">
           <div className="p-8">
-            <img src={signinimage} alt="bob" className="h-72 mx-auto" />
+            <img
+              src={signinimage}
+              alt="Sign In Illustration"
+              className="h-72 mx-auto"
+            />
           </div>
         </div>
 
+        {/* Right Side (Sign In Form) */}
         <div className="w-1/2 p-8">
           <div className="text-center mb-8">
             <img
@@ -195,9 +210,6 @@ const SignInPage = () => {
             <h2 className="text-2xl font-bold text-gray-700">
               Welcome to WorkHive!
             </h2>
-          </div>
-          <div className="my-6">
-            <div></div>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
