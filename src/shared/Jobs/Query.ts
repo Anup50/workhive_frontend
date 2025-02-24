@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllJobs, getRecommendedJobs } from "../../Api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { createJobs, getAllJobs, getRecommendedJobs } from "../../Api";
 
 export interface Employer {
     _id: string;
@@ -68,4 +69,24 @@ export const useGetJobs = () => {
       enabled: !!jobSeekerId,
     });
   };
-  
+  export const useCreateJob = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation<Job, ErrorResponse, Job>({
+      mutationKey: ["createJob"],
+      mutationFn: async (jobData) => {
+        try {
+          const response = await createJobs(jobData);
+          return response.data;
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || "Failed to create job");
+          }
+          throw new Error("Failed to create job");
+        }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      },
+    });
+  };
