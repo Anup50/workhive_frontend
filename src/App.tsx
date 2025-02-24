@@ -18,6 +18,7 @@ const Home = lazy(() => import("./core/public/Home"));
 const SignInPage = lazy(() => import("./core/public/Signin"));
 const SignUpPage = lazy(() => import("./core/public/Signup"));
 const User = lazy(() => import("./core/private/JobSeeker/Home"));
+const Employer = lazy(() => import("./core/private/employer/Index"));
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
               {/* Private Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/user" element={<User />} />
+                <Route path="/employer" element={<Employer />} />
               </Route>
             </Routes>
           </Suspense>
