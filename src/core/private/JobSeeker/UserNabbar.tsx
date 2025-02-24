@@ -1,5 +1,6 @@
 import { Bell, Briefcase, FileText } from "lucide-react";
 import { useState } from "react";
+import ThemeToggle from "../../../components/ThemeToggle";
 import group83 from "/home/anup/Videos/Workhive_web/workhive_frontend/src/assets/logo/logo.png";
 
 const UserNavbar = () => {
@@ -98,6 +99,7 @@ const UserNavbar = () => {
             </li>
           </ul>
         </div>
+        <ThemeToggle />
       </div>
     </div>
   );
