@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { Suspense, lazy } from "react";
 import {
+  Navigate,
   Outlet,
   Route,
   BrowserRouter as Router,
@@ -9,11 +10,16 @@ import {
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import Navbar from "./components/Navbar";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./context/ProtectedRoute";
+import PageNotFound from "./shared/PageNotFound";
 
 const PublicLayout = () => {
   const location = useLocation();
+  const { role } = useAuth();
+  if (role && location.pathname === "/") {
+    return <Navigate to="/user" replace />;
+  }
   const showNavbar =
     location.pathname !== "/signin" && location.pathname !== "/signup";
 
@@ -61,6 +67,7 @@ const App: React.FC = () => {
                 <Route path="/user" element={<User />} />
                 <Route path="/employer" element={<Employer />} />
               </Route>
+              <Route path="*" element={<PageNotFound />} />
             </Routes>
           </Suspense>
         </AuthProvider>
