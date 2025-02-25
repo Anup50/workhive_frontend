@@ -78,11 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("role", role);
 
     navigate(
-      role === "Admin"
-        ? "/admin"
-        : role === "Employer"
-        ? "/employer-dashboard"
-        : "/user"
+      role === "Admin" ? "/admin" : role === "Employer" ? "/employer" : "/user"
     );
   };
 
