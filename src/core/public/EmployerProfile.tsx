@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { getEmployer } from "../../Api";
 import AboutEmployer from "../../components/AboutEmployer";
 import AnimationWrapper from "../../components/AnimationWrapper";
+import { InPageNavigation } from "../../components/InPageNavigation";
+import JobCard from "../../components/JobCard";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../context/AuthContext";
 
@@ -18,6 +20,10 @@ export const employerDataStructure = {
   post_info: {
     total_vacancies: 0,
     active_vacancies: 0,
+  },
+  jobs: {
+    allJobs: [],
+    activeJobs: [],
   },
 };
 
@@ -36,6 +42,7 @@ const EmployerProfile = () => {
       createdAt,
     },
     post_info: { total_vacancies, active_vacancies },
+    jobs: { allJobs, activeJobs },
   } = employerProfile;
 
   const fetchEmployerProfile = async () => {
@@ -106,6 +113,46 @@ const EmployerProfile = () => {
               joinedAt={createdAt}
               location={location}
             />
+          </div>
+          <div className="max-wd:mt12 w-full  ">
+            <InPageNavigation routes={[`Active Jobs`, "All jobs"]}>
+              {activeJobs == null ? (
+                <Loader />
+              ) : activeJobs.length > 0 ? (
+                activeJobs.map((job: any) => (
+                  <JobCard
+                    key={job?._id}
+                    title={job?.title}
+                    company={employer_name}
+                    location={job?.location}
+                    jobType={job?.jobType}
+                    description={job?.description}
+                    applyLink={`/user/${job?._id}/apply`}
+                    logoSrc={companyLogo}
+                  />
+                ))
+              ) : (
+                <h1>No jobs found</h1>
+              )}
+              {allJobs == null ? (
+                <Loader />
+              ) : activeJobs.length > 0 ? (
+                allJobs.map((job: any) => (
+                  <JobCard
+                    key={job?._id}
+                    title={job?.title}
+                    company={employer_name}
+                    location={job?.location}
+                    jobType={job?.jobType}
+                    description={job?.description}
+                    applyLink={`/user/${job?._id}/apply`}
+                    logoSrc={companyLogo}
+                  />
+                ))
+              ) : (
+                <h1>No jobs found</h1>
+              )}
+            </InPageNavigation>
           </div>
         </section>
       )}
