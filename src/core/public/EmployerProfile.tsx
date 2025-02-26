@@ -133,8 +133,10 @@ const EmployerProfile = () => {
                     />
                   ))
                 ) : (
-                  <h1>No jobs found</h1>
+                  <h1 className="text center">No Active Jobs</h1>
                 )}
+              </div>
+              <div className="max-h-[800px] overflow-y-auto p-2 space-y-4">
                 {allJobs == null ? (
                   <Loader />
                 ) : activeJobs.length > 0 ? (
