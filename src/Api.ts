@@ -15,6 +15,11 @@ export const getAllJobs = () => Api.get("/api/job/getall");
 export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
 export const searchEmployer = (query: string) => Api.get(`/api/search/employers/${query}`);
 export const getJobSeekerId = () => Api.get("/api/jobseeker/getJobSeekerId");
+export const getEmployerId = () => Api.get("/api/employer/getEmployerId");
 export const getRecommendedJobs = (jobSeekerId: string) => {
   return Api.get(`/api/job/recommended/${jobSeekerId}`);
+};
+export const getEmployer = (employerId: string) => {
+  console.log("Fetching employer with ID:", employerId);
+  return Api.get(`/api/employer/find/${employerId}`);
 };
