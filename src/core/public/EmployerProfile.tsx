@@ -114,44 +114,46 @@ const EmployerProfile = () => {
               location={location}
             />
           </div>
-          <div className="max-wd:mt12 w-full  ">
+          <div className="max-wd:mt12 w-full   ">
             <InPageNavigation routes={[`Active Jobs`, "All jobs"]}>
-              {activeJobs == null ? (
-                <Loader />
-              ) : activeJobs.length > 0 ? (
-                activeJobs.map((job: any) => (
-                  <JobCard
-                    key={job?._id}
-                    title={job?.title}
-                    company={employer_name}
-                    location={job?.location}
-                    jobType={job?.jobType}
-                    description={job?.description}
-                    applyLink={`/user/${job?._id}/apply`}
-                    logoSrc={companyLogo}
-                  />
-                ))
-              ) : (
-                <h1>No jobs found</h1>
-              )}
-              {allJobs == null ? (
-                <Loader />
-              ) : activeJobs.length > 0 ? (
-                allJobs.map((job: any) => (
-                  <JobCard
-                    key={job?._id}
-                    title={job?.title}
-                    company={employer_name}
-                    location={job?.location}
-                    jobType={job?.jobType}
-                    description={job?.description}
-                    applyLink={`/user/${job?._id}/apply`}
-                    logoSrc={companyLogo}
-                  />
-                ))
-              ) : (
-                <h1>No jobs found</h1>
-              )}
+              <div className="max-h-[800px] overflow-y-auto p-2 space-y-4">
+                {activeJobs == null ? (
+                  <Loader />
+                ) : activeJobs.length > 0 ? (
+                  activeJobs.map((job: any) => (
+                    <JobCard
+                      key={job?._id}
+                      title={job?.title}
+                      company={employer_name}
+                      location={job?.location}
+                      jobType={job?.jobType}
+                      description={job?.description}
+                      applyLink={`/user/${job?._id}/apply`}
+                      logoSrc={companyLogo}
+                    />
+                  ))
+                ) : (
+                  <h1>No jobs found</h1>
+                )}
+                {allJobs == null ? (
+                  <Loader />
+                ) : activeJobs.length > 0 ? (
+                  allJobs.map((job: any) => (
+                    <JobCard
+                      key={job?._id}
+                      title={job?.title}
+                      company={employer_name}
+                      location={job?.location}
+                      jobType={job?.jobType}
+                      description={job?.description}
+                      applyLink={`/user/${job?._id}/apply`}
+                      logoSrc={companyLogo}
+                    />
+                  ))
+                ) : (
+                  <h1>No jobs found</h1>
+                )}
+              </div>
             </InPageNavigation>
           </div>
         </section>
