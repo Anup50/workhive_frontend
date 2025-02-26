@@ -42,6 +42,7 @@ const queryClient = new QueryClient({
 const Home = lazy(() => import("./core/public/Home"));
 const SignInPage = lazy(() => import("./core/public/Signin"));
 const SignUpPage = lazy(() => import("./core/public/Signup"));
+const EmployerPage = lazy(() => import("./core/public/EmployerProfile"));
 const User = lazy(() => import("./core/private/JobSeeker/Home"));
 const Employer = lazy(() => import("./core/private/employer/Index"));
 const Search = lazy(() => import("./shared/Search/SearchPage"));
@@ -57,6 +58,10 @@ const App: React.FC = () => {
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/search/:query" element={<Search />} />
+                <Route
+                  path="/employer/:employerId"
+                  element={<EmployerPage />}
+                />
               </Route>
 
               <Route path="/signin" element={<SignInPage />} />
