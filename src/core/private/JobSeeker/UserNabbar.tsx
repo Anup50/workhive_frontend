@@ -1,10 +1,21 @@
 import { Bell, Briefcase, FileText } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../../components/ThemeToggle";
+import { useAuth } from "../../../context/AuthContext";
 import group83 from "/home/anup/Videos/Workhive_web/workhive_frontend/src/assets/logo/logo.png";
 
 const UserNavbar = () => {
   const [activeTab, setActiveTab] = useState("jobs");
+  const { logout } = useAuth();
+  let navigate = useNavigate();
+  const handleSearch = (e) => {
+    let query = e.target.value;
+
+    if (e.keyCode == 13 && query.length) {
+      navigate(`user/search/${query}`);
+    }
+  };
 
   return (
     <div className="navbar bg-base-100 shadow-md">
@@ -17,6 +28,7 @@ const UserNavbar = () => {
             type="text"
             placeholder="Search"
             className="input input-bordered w-full"
+            onKeyDown={handleSearch}
           />
           <button className="btn btn-square">
             <svg
@@ -70,7 +82,6 @@ const UserNavbar = () => {
           </button>
         </div>
 
-        {/* Profile Dropdown remains same */}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
@@ -92,10 +103,7 @@ const UserNavbar = () => {
               </a>
             </li>
             <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a>Logout</a>
+              <a onClick={logout}>Logout</a>
             </li>
           </ul>
         </div>

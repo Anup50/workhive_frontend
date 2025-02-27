@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 import Navbar from "./components/Navbar";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./context/ProtectedRoute";
+
+import UserNavbar from "./core/private/JobSeeker/UserNabbar";
 import PageNotFound from "./shared/PageNotFound";
 
 const PublicLayout = () => {
@@ -30,6 +32,21 @@ const PublicLayout = () => {
     </>
   );
 };
+const PrivateLayout = () => {
+  const location = useLocation();
+  const { role } = useAuth();
+
+  // Check if user is on a private route (starts with /user or /employer)
+  const showUserNavbar = location.pathname.startsWith("/user");
+
+  return (
+    <>
+      {showUserNavbar && <UserNavbar />}
+      <Outlet />
+    </>
+  );
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -45,7 +62,50 @@ const SignUpPage = lazy(() => import("./core/public/Signup"));
 const EmployerPage = lazy(() => import("./core/public/EmployerProfile"));
 const User = lazy(() => import("./core/private/JobSeeker/Home"));
 const Employer = lazy(() => import("./core/private/employer/Index"));
+const JobseekerForm = lazy(
+  () => import("./core/private/JobSeeker/JobseekerForm")
+);
+const UserSearch = lazy(() => import("./core/private/JobSeeker/UserSearch"));
 const Search = lazy(() => import("./shared/Search/SearchPage"));
+
+// const App: React.FC = () => {
+//   return (
+//     <QueryClientProvider client={queryClient}>
+//       <Router>
+//         <AuthProvider>
+//           <Toaster />
+//           <Suspense fallback={<div>Loading...</div>}>
+//             <Routes>
+//               {/* Public Routes */}
+//               <Route element={<PublicLayout />}>
+//                 <Route path="/" element={<Home />} />
+//                 <Route path="/search/:query" element={<Search />} />
+//                 <Route
+//                   path="/employer/:employerId"
+//                   element={<EmployerPage />}
+//                 />
+//               </Route>
+
+//               <Route path="/signin" element={<SignInPage />} />
+//               <Route path="/signup" element={<SignUpPage />} />
+
+//               {/* Private Routes */}
+//               <Route element={<ProtectedRoute />}>
+//                 <Route element={<PrivateLayout />}></Route>
+//                 <Route path="/user" element={<User />} />
+//                 <Route path="/user/form" element={<JobseekerForm />} />
+//                 <Route path="/employer" element={<Employer />} />
+//               </Route>
+//               <Route path="*" element={<PageNotFound />} />
+//             </Routes>
+//           </Suspense>
+//         </AuthProvider>
+//       </Router>
+//     </QueryClientProvider>
+//   );
+// };
+
+//
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -69,9 +129,14 @@ const App: React.FC = () => {
 
               {/* Private Routes */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/user" element={<User />} />
-                <Route path="/employer" element={<Employer />} />
+                <Route element={<PrivateLayout />}>
+                  <Route path="/user" element={<User />} />
+                  <Route path="/user/form" element={<JobseekerForm />} />
+                  <Route path="/user/search/:query" element={<UserSearch />} />
+                  <Route path="/employer" element={<Employer />} />
+                </Route>
               </Route>
+
               <Route path="*" element={<PageNotFound />} />
             </Routes>
           </Suspense>
@@ -80,5 +145,4 @@ const App: React.FC = () => {
     </QueryClientProvider>
   );
 };
-
 export default App;

@@ -2,7 +2,6 @@ import { Navigate } from "react-router-dom";
 import JobCard from "../../../components/JobCard";
 import { useAuth } from "../../../context/AuthContext";
 import { useGetJobs, useGetRecommendedJobs } from "../../../shared/Jobs/Query";
-import UserNavbar from "./UserNabbar";
 
 const Home: React.FC = () => {
   const { jobSeekerId } = useAuth();
@@ -20,7 +19,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
-      <UserNavbar />
+      {/* <UserNavbar /> */}
       <main className="w-full p-6">
         {isLoading && (
           <div className="p-4 text-gray-600 dark:text-gray-300">
