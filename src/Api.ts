@@ -15,6 +15,13 @@ export const getAllJobs = () => Api.get("/api/job/getall");
 export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
 export const searchEmployer = (query: string) => Api.get(`/api/search/employers/${query}`);
 export const getJobSeekerId = () => Api.get("/api/jobseeker/getJobSeekerId");
+export const createJobSeeker = (payload: { userId: string; bio: string; skills: string[]; location: string; profilePicture: string; }) => Api.post("/api/jobseeker/", payload);
+export const uploadProfileImage = (imageFormData: FormData) => {
+  return Api.post("/api/jobseeker/uploadImage", imageFormData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
 export const getEmployerId = () => Api.get("/api/employer/getEmployerId");
 export const getRecommendedJobs = (jobSeekerId: string) => {
   return Api.get(`/api/job/recommended/${jobSeekerId}`);

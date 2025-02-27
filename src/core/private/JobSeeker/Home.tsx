@@ -1,10 +1,14 @@
+import { Navigate } from "react-router-dom";
 import JobCard from "../../../components/JobCard";
+import { useAuth } from "../../../context/AuthContext";
 import { useGetJobs, useGetRecommendedJobs } from "../../../shared/Jobs/Query";
-import { useGetJobSeekerId } from "../JobSeeker/Query";
 import UserNavbar from "./UserNabbar";
 
 const Home: React.FC = () => {
-  const { data: jobSeekerId } = useGetJobSeekerId();
+  const { jobSeekerId } = useAuth();
+  if (jobSeekerId == "null") {
+    return <Navigate to="/user/form" />;
+  }
 
   const {
     data: recommendedJobs,
@@ -15,13 +19,17 @@ const Home: React.FC = () => {
   const { data: jobs, isLoading, isError, error } = useGetJobs();
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
       <UserNavbar />
-      <main className="w-full max-w-4xl p-6 flex flex-col items-center">
-        {isLoading && <div className="p-4 text-gray-600">Loading jobs...</div>}
+      <main className="w-full p-6">
+        {isLoading && (
+          <div className="p-4 text-gray-600 dark:text-gray-300">
+            Loading jobs...
+          </div>
+        )}
 
         {isError && (
-          <div className="p-4 bg-red-100 text-red-600 rounded-lg">
+          <div className="p-4 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded-lg">
             Error: {error?.message || "Failed to load jobs"}
           </div>
         )}
@@ -29,14 +37,14 @@ const Home: React.FC = () => {
         {!isRecLoading && !isRecError && recommendedJobs && (
           <>
             <div className="flex items-center w-full my-6">
-              <hr className="flex-grow border-t border-gray-300" />
-              <h2 className="text-xl font-semibold text-gray-700 mx-4">
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mx-4">
                 Recommended Jobs
               </h2>
-              <hr className="flex-grow border-t border-gray-300" />
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
             </div>
 
-            <div className="w-full flex flex-col items-center space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {recommendedJobs.map((job) => (
                 <JobCard
                   key={job._id}
@@ -56,14 +64,14 @@ const Home: React.FC = () => {
         {!isLoading && !isError && (
           <>
             <div className="flex items-center w-full my-6">
-              <hr className="flex-grow border-t border-gray-300" />
-              <h2 className="text-xl font-semibold text-gray-700 mx-4">
-                Jobs for You
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mx-4">
+                Recent Jobs
               </h2>
-              <hr className="flex-grow border-t border-gray-300" />
+              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
             </div>
 
-            <div className="w-full flex flex-col items-center space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {jobs?.map((job) => (
                 <JobCard
                   key={job?._id}

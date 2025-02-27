@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import React, {
   createContext,
   useContext,
@@ -44,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<Role | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [jobSeekerId, setJobSeekerId] = useState<string | null>(null);
   const [employerId, setEmployerId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  // Fetch jobseekerId if the role is "User" and token is available
+  //Fetch jobseekerId if the role is "User" and token is available
   useEffect(() => {
     const fetchJobSeekerId = async () => {
       try {
@@ -100,6 +102,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchJobSeekerId();
     }
   }, [token, role, jobSeekerId]);
+  // useEffect(() => {
+  //   const fetchJobSeekerId = async () => {
+  //     try {
+  //       const response = await getJobSeekerId();
+  //       const id = response?.data?.jobSeekerId;
+
+  //       if (!id) {
+  //         navigate("/user/form");
+  //       } else if (id && id !== jobSeekerId) {
+  //         // If jobSeekerId is different, update it
+  //         setJobSeekerId(id);
+  //         localStorage.setItem("jobSeekerId", id);
+  //       }
+  //     } catch (error) {
+  //       navigate("/user/form");
+  //       console.error("Error fetching jobseekerId:", error);
+  //       navigate("/user/form"); // Redirect to form in case of error
+  //     }
+  //   };
+
+  //   if (token && role === "User" && !jobSeekerId) {
+  //     fetchJobSeekerId();
+  //   }
+  // }, [token, role, jobSeekerId, navigate]);
+  // Removed jobSeekerId to prevent unnecessary re-fetching
 
   // Fetch employerId if the role is "Employer" and token is available
   useEffect(() => {
@@ -123,21 +150,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const isAuthenticated = user !== null && token !== null;
 
-  const login = (user: User, token: string, role: Role) => {
+  // const login = (user: User, token: string, role: Role) => {
+  // const decoded: any = jwtDecode(token);
+  // setUserId(decoded.id);
+  //   setUser(user);
+  //   setToken(token);
+  //   setRole(role);
+  //   localStorage.setItem("user", JSON.stringify(user));
+  //   localStorage.setItem("token", token);
+  //   localStorage.setItem("role", role);
+  //   localStorage.setItem("userId", decoded.id);
+
+  //   // Remove any old role-specific ids (we'll fetch fresh ones)
+  //   localStorage.removeItem("jobSeekerId");
+  //   localStorage.removeItem("employerId");
+
+  //   navigate(
+  //     role === "Admin" ? "/admin" : role === "Employer" ? "/employer" : "/user"
+  //   );
+  // };
+  // //Example: After login, check if jobseekerId is null
+
+  const login = async (user: User, token: string, role: Role) => {
     setUser(user);
     setToken(token);
     setRole(role);
+    const decoded: any = jwtDecode(token);
+    setUserId(decoded.id);
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
     localStorage.setItem("role", role);
+    localStorage.setItem("userId", decoded.id);
 
-    // Remove any old role-specific ids (we'll fetch fresh ones)
-    localStorage.removeItem("jobSeekerId");
-    localStorage.removeItem("employerId");
-
-    navigate(
-      role === "Admin" ? "/admin" : role === "Employer" ? "/employer" : "/user"
-    );
+    // If the role is 'User' and the jobseekerId is null, redirect to form
+    if (role === "User" && jobSeekerId == "null") {
+      navigate("/user/form");
+    } else if (role === "Employer" && !employerId) {
+      navigate("/employer/form"); // Redirect to employer profile completion
+    } else {
+      navigate(
+        role === "Admin"
+          ? "/admin"
+          : role === "Employer"
+          ? "/employer"
+          : "/user"
+      );
+    }
   };
 
   const logout = () => {
@@ -149,6 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+
     localStorage.removeItem("jobSeekerId");
     localStorage.removeItem("employerId");
     navigate("/");
@@ -159,6 +218,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       user,
       token,
       role,
+      userId,
       jobSeekerId,
       employerId,
       isAuthenticated,
@@ -171,3 +231,126 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+// import { jwtDecode } from "jwt-decode";
+// import React, {
+//   createContext,
+//   useContext,
+//   useEffect,
+//   useMemo,
+//   useState,
+// } from "react";
+// import { useNavigate } from "react-router-dom";
+
+// interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+// }
+
+// type Role = "Admin" | "User" | "Employer";
+
+// interface AuthContextType {
+//   user: User | null;
+//   userId: string | null;
+//   token: string | null;
+//   role: Role | null;
+//   jobSeekerId: string | null;
+//   employerId: string | null;
+//   isAuthenticated: boolean;
+//   loading: boolean;
+//   login: (token: string, role: Role) => void;
+//   logout: () => void;
+// }
+
+// const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// export const useAuth = (): AuthContextType => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error("useAuth must be used within an AuthProvider");
+//   }
+//   return context;
+// };
+
+// export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+//   children,
+// }) => {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [userId, setUserId] = useState<string | null>(null);
+//   const [token, setToken] = useState<string | null>(null);
+//   const [role, setRole] = useState<Role | null>(null);
+//   const [jobSeekerId, setJobSeekerId] = useState<string | null>(null);
+//   const [employerId, setEmployerId] = useState<string | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     try {
+//       const storedToken = localStorage.getItem("token");
+//       const storedRole = localStorage.getItem("role");
+
+//       if (storedToken && storedRole) {
+//         const decoded: any = jwtDecode(storedToken);
+//         setUserId(decoded.id);
+//         setToken(storedToken);
+//         setRole(storedRole as Role);
+//         localStorage.setItem("userId", decoded.id);
+//       }
+//     } catch (error) {
+//       console.error("Failed to load auth data", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   const login = (token: string, role: Role) => {
+// const decoded: any = jwtDecode(token);
+// setUserId(decoded.id);
+//     setToken(token);
+//     setRole(role);
+//     localStorage.setItem("token", token);
+//     localStorage.setItem("role", role);
+//     localStorage.setItem("userId", decoded.id);
+//     localStorage.removeItem("jobSeekerId");
+//     localStorage.removeItem("employerId");
+
+//     navigate(
+//       role === "Admin" ? "/admin" : role === "Employer" ? "/employer" : "/user"
+//     );
+//   };
+
+//   const logout = () => {
+//     setUser(null);
+//     setUserId(null);
+//     setToken(null);
+//     setRole(null);
+//     setJobSeekerId(null);
+//     setEmployerId(null);
+//     localStorage.removeItem("userId");
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("role");
+//     localStorage.removeItem("jobSeekerId");
+//     localStorage.removeItem("employerId");
+//     navigate("/");
+//   };
+
+//   const isAuthenticated = token !== null;
+
+//   const value = useMemo(
+//     () => ({
+//       user,
+//       userId,
+//       token,
+//       role,
+//       jobSeekerId,
+//       employerId,
+//       isAuthenticated,
+//       loading,
+//       login,
+//       logout,
+//     }),
+//     [user, userId, token, role, jobSeekerId, employerId, loading]
+//   );
+
+//   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+// };
