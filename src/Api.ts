@@ -13,20 +13,33 @@ export const loginUser = (data: { email: string; password: string; }) => Api.pos
 export const createJobs = (data: any) => Api.post("api/job", data);
 export const getAllJobs = () => Api.get("/api/job/getall");
 export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
+export const getJob =  (id: string | undefined) => {
+  return Api.get(`/api/job/${id}`);
+};
 export const searchEmployer = (query: string) => Api.get(`/api/search/employers/${query}`);
 export const getJobSeekerId = () => Api.get("/api/jobseeker/getJobSeekerId");
 export const createJobSeeker = (payload: { userId: string; bio: string; skills: string[]; location: string; profilePicture: string; }) => Api.post("/api/jobseeker/", payload);
 export const uploadProfileImage = (imageFormData: FormData) => {
   return Api.post("/api/jobseeker/uploadImage", imageFormData, {
     headers: { "Content-Type": "multipart/form-data" },
-  });
+  })
 };
+// export const getJob = (query: string) => Api.get(`/api/job/${query}`);
+// // In your API file
 
 export const getEmployerId = () => Api.get("/api/employer/getEmployerId");
 export const getRecommendedJobs = (jobSeekerId: string) => {
   return Api.get(`/api/job/recommended/${jobSeekerId}`);
 };
+
 export const getEmployer = (employerId: string) => {
   console.log("Fetching employer with ID:", employerId);
   return Api.get(`/api/employer/find/${employerId}`);
 };
+
+
+export const Apply = () =>  Api.post("/api/application");
+export const isApplied = (jobId: string) => Api.get(`/api/application/is-applied/${jobId}`);
+export const getAppliedJobs = () => Api.get("/api/application/applied-jobs"); 
+export const getApplicantsForJob = (jobId: string) => Api.get(`/api/application/job/${jobId}/applicants`);
+
