@@ -27,6 +27,7 @@ interface AuthContextType {
   loading: boolean;
   login: (user: User, token: string, role: Role) => void;
   logout: () => void;
+  setEmployerId: (id: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -221,6 +222,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       userId,
       jobSeekerId,
       employerId,
+      setEmployerId,
       isAuthenticated,
       loading,
       login,
@@ -231,126 +233,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-// import { jwtDecode } from "jwt-decode";
-// import React, {
-//   createContext,
-//   useContext,
-//   useEffect,
-//   useMemo,
-//   useState,
-// } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// interface User {
-//   id: string;
-//   name: string;
-//   email: string;
-// }
-
-// type Role = "Admin" | "User" | "Employer";
-
-// interface AuthContextType {
-//   user: User | null;
-//   userId: string | null;
-//   token: string | null;
-//   role: Role | null;
-//   jobSeekerId: string | null;
-//   employerId: string | null;
-//   isAuthenticated: boolean;
-//   loading: boolean;
-//   login: (token: string, role: Role) => void;
-//   logout: () => void;
-// }
-
-// const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// export const useAuth = (): AuthContextType => {
-//   const context = useContext(AuthContext);
-//   if (!context) {
-//     throw new Error("useAuth must be used within an AuthProvider");
-//   }
-//   return context;
-// };
-
-// export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-//   children,
-// }) => {
-//   const [user, setUser] = useState<User | null>(null);
-//   const [userId, setUserId] = useState<string | null>(null);
-//   const [token, setToken] = useState<string | null>(null);
-//   const [role, setRole] = useState<Role | null>(null);
-//   const [jobSeekerId, setJobSeekerId] = useState<string | null>(null);
-//   const [employerId, setEmployerId] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     try {
-//       const storedToken = localStorage.getItem("token");
-//       const storedRole = localStorage.getItem("role");
-
-//       if (storedToken && storedRole) {
-//         const decoded: any = jwtDecode(storedToken);
-//         setUserId(decoded.id);
-//         setToken(storedToken);
-//         setRole(storedRole as Role);
-//         localStorage.setItem("userId", decoded.id);
-//       }
-//     } catch (error) {
-//       console.error("Failed to load auth data", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, []);
-
-//   const login = (token: string, role: Role) => {
-// const decoded: any = jwtDecode(token);
-// setUserId(decoded.id);
-//     setToken(token);
-//     setRole(role);
-//     localStorage.setItem("token", token);
-//     localStorage.setItem("role", role);
-//     localStorage.setItem("userId", decoded.id);
-//     localStorage.removeItem("jobSeekerId");
-//     localStorage.removeItem("employerId");
-
-//     navigate(
-//       role === "Admin" ? "/admin" : role === "Employer" ? "/employer" : "/user"
-//     );
-//   };
-
-//   const logout = () => {
-//     setUser(null);
-//     setUserId(null);
-//     setToken(null);
-//     setRole(null);
-//     setJobSeekerId(null);
-//     setEmployerId(null);
-//     localStorage.removeItem("userId");
-//     localStorage.removeItem("token");
-//     localStorage.removeItem("role");
-//     localStorage.removeItem("jobSeekerId");
-//     localStorage.removeItem("employerId");
-//     navigate("/");
-//   };
-
-//   const isAuthenticated = token !== null;
-
-//   const value = useMemo(
-//     () => ({
-//       user,
-//       userId,
-//       token,
-//       role,
-//       jobSeekerId,
-//       employerId,
-//       isAuthenticated,
-//       loading,
-//       login,
-//       logout,
-//     }),
-//     [user, userId, token, role, jobSeekerId, employerId, loading]
-//   );
-
-//   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-// };

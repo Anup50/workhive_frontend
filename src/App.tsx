@@ -65,6 +65,9 @@ const Employer = lazy(() => import("./core/private/employer/Index"));
 const JobseekerForm = lazy(
   () => import("./core/private/JobSeeker/JobseekerForm")
 );
+const EmployerForm = lazy(
+  () => import("./core/private/employer/EmployerRegister")
+);
 const UserSearch = lazy(() => import("./core/private/JobSeeker/UserSearch"));
 const Search = lazy(() => import("./shared/Search/SearchPage"));
 const ViewJobs = lazy(() => import("./core/public/ViewJobs"));
@@ -136,6 +139,7 @@ const App: React.FC = () => {
                   <Route path="/user/form" element={<JobseekerForm />} />
                   <Route path="/user/search/:query" element={<UserSearch />} />
                   <Route path="/employer" element={<Employer />} />
+                  <Route path="/employer/form" element={<EmployerForm />} />
                 </Route>
               </Route>
 

@@ -7,16 +7,39 @@ const Api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
+//Auth=============================================================================================================================================================
 export const registerUser = (data: { name: string; email: string; password: string; role: string | null; }) => Api.post("api/user/register", data);
 export const loginUser = (data: { email: string; password: string; }) => Api.post("api/user/login", data);
+
+//Jobs=============================================================================================================================================================
 export const createJobs = (data: any) => Api.post("api/job", data);
 export const getAllJobs = () => Api.get("/api/job/getall");
-export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
 export const getJob =  (id: string | undefined) => {
   return Api.get(`/api/job/${id}`);
 };
+export const getRecommendedJobs = (jobSeekerId: string) => {
+  return Api.get(`/api/job/recommended/${jobSeekerId}`);
+};
+export const getSimilarJobs = (id: string) => {
+  return Api.get(`/api/job/getsimilar/${id}`);
+};
+export const createEmployer = (formData: FormData) => {
+  return Api.post("/api/employer/add", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+};
+//Search=============================================================================================================================================================
 export const searchEmployer = (query: string) => Api.get(`/api/search/employers/${query}`);
+export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
+
+//Employer=============================================================================================================================================================
+export const getEmployerId = () => Api.get("/api/employer/getEmployerId");
+export const getEmployer = (employerId: string) => {
+  console.log("Fetching employer with ID:", employerId);
+  return Api.get(`/api/employer/find/${employerId}`);
+};
+
+//JobSeeker=============================================================================================================================================================
 export const getJobSeekerId = () => Api.get("/api/jobseeker/getJobSeekerId");
 export const createJobSeeker = (payload: { userId: string; bio: string; skills: string[]; location: string; profilePicture: string; }) => Api.post("/api/jobseeker/", payload);
 export const uploadProfileImage = (imageFormData: FormData) => {
@@ -24,20 +47,7 @@ export const uploadProfileImage = (imageFormData: FormData) => {
     headers: { "Content-Type": "multipart/form-data" },
   })
 };
-// export const getJob = (query: string) => Api.get(`/api/job/${query}`);
-// // In your API file
-
-export const getEmployerId = () => Api.get("/api/employer/getEmployerId");
-export const getRecommendedJobs = (jobSeekerId: string) => {
-  return Api.get(`/api/job/recommended/${jobSeekerId}`);
-};
-
-export const getEmployer = (employerId: string) => {
-  console.log("Fetching employer with ID:", employerId);
-  return Api.get(`/api/employer/find/${employerId}`);
-};
-
-
+//Apply========================================================================================================================================================
 export const Apply = () =>  Api.post("/api/application");
 export const isApplied = (jobId: string) => Api.get(`/api/application/is-applied/${jobId}`);
 export const getAppliedJobs = () => Api.get("/api/application/applied-jobs"); 
