@@ -67,7 +67,7 @@ const JobseekerForm = lazy(
 );
 const UserSearch = lazy(() => import("./core/private/JobSeeker/UserSearch"));
 const Search = lazy(() => import("./shared/Search/SearchPage"));
-
+const ViewJobs = lazy(() => import("./core/public/ViewJobs"));
 // const App: React.FC = () => {
 //   return (
 //     <QueryClientProvider client={queryClient}>
@@ -122,6 +122,8 @@ const App: React.FC = () => {
                   path="/employer/:employerId"
                   element={<EmployerPage />}
                 />
+                {/* <Route path="/job/" element={<ViewJobs />} /> */}
+                <Route path="/job/:id" element={<ViewJobs />} />
               </Route>
 
               <Route path="/signin" element={<SignInPage />} />
