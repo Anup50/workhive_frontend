@@ -1,234 +1,204 @@
-// import axios from "axios";
-// import React, { useEffect } from "react";
-// import { useForm } from "react-hook-form";
-
-// interface JobFormProps {
-//   jobId?: string;
-//   onSuccess: () => void;
-// }
-
-// interface JobData {
-//   title: string;
-//   description: string;
-//   employer: string;
-//   location: string;
-//   salary: number;
-//   jobType: "Full-time" | "Part-time" | "Contract" | "Freelance";
-//   experienceLevel: "Entry" | "Mid" | "Senior";
-//   deadline?: string;
-//   skillsRequired: string;
-//   isActive: boolean;
-// }
-
-// const JobForm: React.FC<JobFormProps> = ({ jobId, onSuccess }) => {
-//   const {
-//     register,
-//     handleSubmit,
-//     setValue,
-//     reset,
-//     formState: { errors },
-//   } = useForm<JobData>();
-
-//   useEffect(() => {
-//     if (jobId) {
-//       axios.get(`/api/jobs/${jobId}`).then((response) => {
-//         const job = response.data;
-//         setValue("title", job.title);
-//         setValue("description", job.description);
-//         setValue("employer", job.employer);
-//         setValue("location", job.location);
-//         setValue("salary", job.salary);
-//         setValue("jobType", job.jobType);
-//         setValue("experienceLevel", job.experienceLevel);
-//         setValue("deadline", job.deadline?.split("T")[0]);
-//         setValue("skillsRequired", job.skillsRequired.join(", "));
-//         setValue("isActive", job.isActive);
-//       });
-//     } else {
-//       reset();
-//     }
-//   }, [jobId, setValue, reset]);
-
-//   const onSubmit = async (data: JobData) => {
-//     try {
-//       const formattedData = {
-//         ...data,
-//         skillsRequired: data.skillsRequired
-//           .split(",")
-//           .map((skill) => skill.trim().toLowerCase()),
-//       };
-//       if (jobId) {
-//         await axios.put(`/api/jobs/${jobId}`, formattedData);
-//       } else {
-//         await axios.post("/api/jobs", formattedData);
-//       }
-//       onSuccess();
-//     } catch (error) {
-//       console.error("Error submitting job:", error);
-//     }
-//   };
-
-//   return (
-//     <form
-//       onSubmit={handleSubmit(onSubmit)}
-//       className="space-y-4 p-4 border rounded"
-//     >
-//       <input
-//         {...register("title", { required: "Title is required" })}
-//         placeholder="Job Title"
-//         className="input input-bordered w-full"
-//       />
-//       {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-
-//       <textarea
-//         {...register("description", { required: "Description is required" })}
-//         placeholder="Job Description"
-//         className="textarea textarea-bordered w-full"
-//       />
-//       {errors.description && (
-//         <p className="text-red-500">{errors.description.message}</p>
-//       )}
-
-//       <input
-//         {...register("location", { required: "Location is required" })}
-//         placeholder="Location"
-//         className="input input-bordered w-full"
-//       />
-//       {errors.location && (
-//         <p className="text-red-500">{errors.location.message}</p>
-//       )}
-
-//       <input
-//         type="number"
-//         {...register("salary", { required: "Salary is required" })}
-//         placeholder="Salary"
-//         className="input input-bordered w-full"
-//       />
-//       {errors.salary && <p className="text-red-500">{errors.salary.message}</p>}
-
-//       <select
-//         {...register("jobType", { required: "Job type is required" })}
-//         className="select select-bordered w-full"
-//       >
-//         <option value="">Select Job Type</option>
-//         <option value="Full-time">Full-time</option>
-//         <option value="Part-time">Part-time</option>
-//         <option value="Contract">Contract</option>
-//         <option value="Freelance">Freelance</option>
-//       </select>
-//       {errors.jobType && (
-//         <p className="text-red-500">{errors.jobType.message}</p>
-//       )}
-
-//       <select
-//         {...register("experienceLevel", {
-//           required: "Experience level is required",
-//         })}
-//         className="select select-bordered w-full"
-//       >
-//         <option value="">Select Experience Level</option>
-//         <option value="Entry">Entry</option>
-//         <option value="Mid">Mid</option>
-//         <option value="Senior">Senior</option>
-//       </select>
-//       {errors.experienceLevel && (
-//         <p className="text-red-500">{errors.experienceLevel.message}</p>
-//       )}
-
-//       <input
-//         type="date"
-//         {...register("deadline")}
-//         className="input input-bordered w-full"
-//       />
-
-//       <input
-//         {...register("skillsRequired", { required: "Skills are required" })}
-//         placeholder="Skills (comma-separated)"
-//         className="input input-bordered w-full"
-//       />
-//       {errors.skillsRequired && (
-//         <p className="text-red-500">{errors.skillsRequired.message}</p>
-//       )}
-
-//       <label className="flex items-center space-x-2">
-//         <input type="checkbox" {...register("isActive")} className="checkbox" />
-//         <span>Is Active</span>
-//       </label>
-
-//       <button type="submit" className="btn btn-primary w-full">
-//         {jobId ? "Update Job" : "Add Job"}
-//       </button>
-//     </form>
-//   );
-// };
-
-// export default JobForm;
+import { Briefcase, Building2, ListChecks } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Job, useCreateJob } from "../../../shared/Jobs/Query";
+import { ExperienceLevel, JobType } from "./types"; // Define these enums in your types
 
-interface JobFormProps {
-  jobId?: string;
-}
-
-interface JobFormData {
-  title: string;
-  description: string;
-  location: string;
-  salary: string;
-  jobType: string;
-  experienceLevel: "Entry" | "Mid" | "Senior";
-  skillsRequired: string;
-  deadline?: string;
-  isActive?: boolean;
-}
-
-const JobForm = ({ jobId }: JobFormProps) => {
+export default function AddJobPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-  } = useForm<JobFormData>();
-  const { mutate, isPending, isError, error } = useCreateJob();
+  } = useForm();
+  const [responsibilities, setResponsibilities] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string[]>([]);
 
-  const onSubmit = (formData: JobFormData) => {
-    // Transform form data to match API expectations
-    const jobData: Partial<Job> = {
-      ...formData,
-      salary: Number(formData.salary),
-      skillsRequired: formData.skillsRequired
-        .split(",")
-        .map((skill) => skill.trim()),
-      // Add any additional transformations here
+  const onSubmit = (data: any) => {
+    const jobData = {
+      ...data,
+      responsibilities,
+      skillsRequired: skills,
+      deadline: new Date(data.deadline).toISOString(),
     };
-
-    mutate(jobData, {
-      onSuccess: () => {
-        reset(); // Reset form after successful submission
-      },
-    });
+    console.log("Job Data:", jobData);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4 p-4 border rounded"
-    >
-      {isError && (
-        <div className="text-red-500 p-2 rounded bg-red-50">
-          {error?.message || "Failed to create job"}
-        </div>
-      )}
+    <div className="min-h-screen bg-base-200 text-base-content p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Post New Job</h1>
 
-      <button
-        type="submit"
-        className="btn btn-primary w-full"
-        disabled={isPending}
-      >
-        {isPending ? "Submitting..." : jobId ? "Update Job" : "Add Job"}
-      </button>
-    </form>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Job Basics Section */}
+          <div className="bg-base-100 rounded-box p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Building2 className="w-6 h-6 text-primary" />
+              Job Basics
+            </h2>
+
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Job Title</span>
+                </label>
+                <input
+                  type="text"
+                  {...register("title", { required: true })}
+                  className="input input-bordered w-full"
+                />
+                {errors.title && (
+                  <span className="text-error mt-2">Title is required</span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Job Type</span>
+                  </label>
+                  <select
+                    {...register("jobType", { required: true })}
+                    className="select select-bordered w-full"
+                  >
+                    {Object.values(JobType).map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Experience Level</span>
+                  </label>
+                  <select
+                    {...register("experienceLevel", { required: true })}
+                    className="select select-bordered w-full"
+                  >
+                    {Object.values(ExperienceLevel).map((level) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Description Section */}
+          <div className="bg-base-100 rounded-box p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <ListChecks className="w-6 h-6 text-primary" />
+              Job Description
+            </h2>
+
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Summary</span>
+                </label>
+                <textarea
+                  {...register("description.summary", { required: true })}
+                  className="textarea textarea-bordered h-32"
+                  placeholder="Enter job summary..."
+                ></textarea>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">
+                    Responsibilities (one per line)
+                  </span>
+                </label>
+                <textarea
+                  onChange={(e) =>
+                    setResponsibilities(e.target.value.split("\n"))
+                  }
+                  className="textarea textarea-bordered h-48"
+                  placeholder="Enter responsibilities..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          {/* Requirements Section */}
+          <div className="bg-base-100 rounded-box p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Briefcase className="w-6 h-6 text-primary" />
+              Requirements
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Location</span>
+                </label>
+                <input
+                  type="text"
+                  {...register("location", { required: true })}
+                  className="input input-bordered w-full"
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Salary ($/year)</span>
+                </label>
+                <input
+                  type="number"
+                  {...register("salary", { required: true })}
+                  className="input input-bordered w-full"
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">
+                    Key Skills (comma separated)
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  onChange={(e) =>
+                    setSkills(e.target.value.split(",").map((s) => s.trim()))
+                  }
+                  className="input input-bordered w-full"
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Application Deadline</span>
+                </label>
+                <input
+                  type="date"
+                  {...register("deadline", { required: true })}
+                  className="input input-bordered w-full"
+                  min={new Date().toISOString().split("T")[0]}
+                  defaultValue={
+                    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                      .toISOString()
+                      .split("T")[0]
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Section */}
+          <div className="bg-base-100 rounded-box p-8">
+            <div className="flex justify-end gap-4">
+              <button type="button" className="btn btn-ghost">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Post Job
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   );
-};
-
-export default JobForm;
+}
