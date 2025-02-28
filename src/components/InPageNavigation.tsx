@@ -15,14 +15,18 @@ export const InPageNavigation: React.FC<InPageNavigationProps> = ({
 }) => {
   const activeLineRef = useRef<HTMLHRElement | null>(null);
   const activeTabRef = useRef<HTMLButtonElement | null>(null);
+  const navContainerRef = useRef<HTMLDivElement | null>(null);
   const [inPageNavIndex, setInPageNavIndex] =
     useState<number>(defaultActiveIndex);
 
   const changePageState = (btn: HTMLButtonElement, i: number) => {
-    if (activeLineRef.current && btn) {
-      const { offsetWidth, offsetLeft } = btn;
-      activeLineRef.current.style.width = `${offsetWidth}px`;
-      activeLineRef.current.style.left = `${offsetLeft}px`;
+    if (activeLineRef.current && navContainerRef.current) {
+      const btnRect = btn.getBoundingClientRect();
+      const containerRect = navContainerRef.current.getBoundingClientRect();
+
+      const relativeLeft = btnRect.left - containerRect.left;
+      activeLineRef.current.style.width = `${btnRect.width}px`;
+      activeLineRef.current.style.left = `${relativeLeft}px`;
       setInPageNavIndex(i);
     }
   };
@@ -35,30 +39,30 @@ export const InPageNavigation: React.FC<InPageNavigationProps> = ({
 
   return (
     <>
-      <div className="relative mb-8 px-6 bg-white border-b border-gray-50 flex flex-col overflow-x-auto">
-        <div className="relative">
-          {" "}
-          <div className="flex">
+      <div className="relative mb-8 bg-base-100 border-b border-base-300 flex flex-col overflow-x-auto">
+        <div className="relative" ref={navContainerRef}>
+          <div className="flex px-4">
             {routes.map((route: string, i: number) => (
-              <button
-                ref={i === defaultActiveIndex ? activeTabRef : null}
-                key={i}
-                className={
-                  `p-4 px-5 capitalize ` +
-                  (inPageNavIndex === i ? "text-black " : "text-gray-500 ") +
-                  (defaultHidden.includes(route) ? "md:hidden" : "")
-                }
-                onClick={(e) => {
-                  changePageState(e.currentTarget, i);
-                }}
-              >
-                {route}
-              </button>
+              <div key={i} className="relative flex-1 text-center">
+                <button
+                  ref={i === defaultActiveIndex ? activeTabRef : null}
+                  className={`w-full px-8 py-6 capitalize transition-colors text-base-content/80
+                    ${defaultHidden.includes(route) ? " md:hidden" : ""}
+                    ${
+                      inPageNavIndex === i
+                        ? "!text-base-content font-semibold"
+                        : "hover:text-base-content/100"
+                    }`}
+                  onClick={(e) => changePageState(e.currentTarget, i)}
+                >
+                  {route}
+                </button>
+              </div>
             ))}
           </div>
           <hr
             ref={activeLineRef}
-            className="absolute bottom-0 h-1 bg-blue-500 duration-300"
+            className="absolute bottom-0 h-1 bg-primary duration-300 ease-in-out"
           />
         </div>
       </div>
