@@ -49,7 +49,12 @@ export const uploadProfileImage = (imageFormData: FormData) => {
 };
 //Apply========================================================================================================================================================
 export const Apply = () =>  Api.post("/api/application");
-export const isApplied = (jobId: string) => Api.get(`/api/application/is-applied/${jobId}`);
+// Add these to your Api.ts file
+export const checkApplicationStatus = (jobId: string, jobSeekerId: string) => 
+  Api.get(`/api/applications/${jobId}/status?jobseekerId=${jobSeekerId}`);
+
+export const applyToJob = (jobId: string, jobSeekerId: string) =>
+  Api.post(`/api/applications/${jobId}/apply`, { userId: jobSeekerId });
 export const getAppliedJobs = () => Api.get("/api/application/applied-jobs"); 
 export const getApplicantsForJob = (jobId: string) => Api.get(`/api/application/job/${jobId}/applicants`);
 

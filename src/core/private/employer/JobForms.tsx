@@ -1,31 +1,102 @@
 import { Briefcase, Building2, ListChecks } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { createJobs } from "../../../Api";
+import { useAuth } from "../../../context/AuthContext";
 import { ExperienceLevel, JobType } from "./types"; // Define these enums in your types
 
 export default function AddJobPage() {
+  const { employerId } = useAuth();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
   const [responsibilities, setResponsibilities] = useState<string[]>([]);
+  const [submitError, setSubmitError] = useState<{
+    message: string;
+    details?: Array<{ field: string; message: string }>;
+  } | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
+  const onSubmit = async (data: any) => {
+    try {
+      const deadlineDate = new Date(data.deadline);
+      // Set time to end of day
+      deadlineDate.setHours(23, 59, 59, 999);
 
-  const onSubmit = (data: any) => {
-    const jobData = {
-      ...data,
-      responsibilities,
-      skillsRequired: skills,
-      deadline: new Date(data.deadline).toISOString(),
-    };
-    console.log("Job Data:", jobData);
+      const jobData = {
+        title: data.title,
+        description: {
+          summary: data.description?.summary,
+          responsibilities: responsibilities,
+        },
+        employer: employerId,
+        location: data.location,
+        salary: Number(data.salary),
+        jobType: data.jobType,
+        experienceLevel: data.experienceLevel,
+        deadline: new Date(data.deadline).toISOString(),
+        skillsRequired: skills,
+        isActive: true,
+      };
+
+      const response = await createJobs(jobData);
+
+      if (response.data.success) {
+        console.log("Job created successfully:", response.data);
+        setSubmitError(null);
+        toast.success("Job created successfully");
+        // Redirect to jobs list
+        navigate("/employer/jobs");
+      } else {
+        setSubmitError({
+          message: response.data.message || "Failed to create job listing",
+          details: response.data.details,
+        });
+      }
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      setSubmitError({
+        message:
+          error.response?.data?.message || "An unexpected error occurred",
+        details: error.response?.data?.details,
+      });
+    }
   };
-
   return (
     <div className="min-h-screen bg-base-200 text-base-content p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Post New Job</h1>
+        {/* Error Display */}
+        {submitError && (
+          <div className="alert alert-error mb-8">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div className="flex flex-col">
+              <span>{submitError.message}</span>
+              {submitError.details?.map((detail, index) => (
+                <span key={index} className="text-xs">
+                  {detail.field}: {detail.message}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Job Basics Section */}
@@ -192,8 +263,19 @@ export default function AddJobPage() {
               <button type="button" className="btn btn-ghost">
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Post Job
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="loading loading-spinner"></span>
+                    Posting...
+                  </>
+                ) : (
+                  "Post Job"
+                )}
               </button>
             </div>
           </div>
