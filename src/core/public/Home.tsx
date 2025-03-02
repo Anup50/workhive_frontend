@@ -6,7 +6,7 @@ const Home: React.FC = () => {
   const { data: jobs, isLoading, isError } = useGetJobs();
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content ">
+    <div className="min-h-screen bg-base-100  text-base-content ">
       <Hero />
       <div>
         <main className="w-full p-6 ">

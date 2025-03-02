@@ -56,7 +56,7 @@ const SearchPage = () => {
             );
           })
         ) : (
-          <h1>No jobs found</h1>
+          <h1>No users found</h1>
         )}
       </>
     );
