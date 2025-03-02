@@ -21,7 +21,7 @@ import Loader from "../../../components/Loader";
 import { useAuth } from "../../../context/AuthContext";
 import { getDay } from "../../../shared/date";
 import { Job } from "../../../shared/Jobs/Query";
-import SimilarJobs from "../../public/SimilarJob";
+import SeekerSimilarJobs from "./JobSeekerSimilar";
 
 const UserJobPage = () => {
   const { id } = useParams();
@@ -250,7 +250,7 @@ const UserJobPage = () => {
           </div>
         </div>
 
-        <SimilarJobs />
+        <SeekerSimilarJobs />
       </div>
     </div>
   );

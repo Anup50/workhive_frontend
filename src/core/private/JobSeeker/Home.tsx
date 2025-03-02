@@ -18,73 +18,103 @@ const Home: React.FC = () => {
   const { data: jobs, isLoading, isError, error } = useGetJobs();
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
-      {/* <UserNavbar /> */}
+    <div className="bg-base-200 min-h-screen">
       <main className="w-full p-6">
-        {isLoading && (
-          <div className="p-4 text-gray-600 dark:text-gray-300">
-            Loading jobs...
-          </div>
-        )}
-
-        {isError && (
-          <div className="p-4 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded-lg">
-            Error: {error?.message || "Failed to load jobs"}
-          </div>
-        )}
         {/* Recommended Jobs Section */}
         {!isRecLoading && !isRecError && recommendedJobs && (
-          <>
-            <div className="flex items-center w-full my-6">
-              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mx-4">
+          <section className="mb-12">
+            <div className="flex items-center mb-8">
+              <hr className="flex-grow border-t border-base-content/20" />
+              <h2 className="text-2xl font-semibold px-4 text-base-content">
                 Recommended Jobs
               </h2>
-              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+              <hr className="flex-grow border-t border-base-content/20" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recommendedJobs.map((job) => (
-                <JobCard
-                  key={job._id}
-                  title={job.title}
-                  company={job.employer?.companyName}
-                  location={job.location}
-                  jobType={job.jobType}
-                  description={job.description}
-                  applyLink={`/user/${job._id}/apply`}
-                  logoSrc={job.employer?.companyLogo}
-                />
+                <div
+                  key={job?._id}
+                  className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <JobCard
+                    id={job?._id}
+                    title={job?.title}
+                    company={job?.employer?.companyName}
+                    location={job?.location}
+                    jobType={job?.jobType}
+                    salary={job?.salary}
+                    description={job.description}
+                    applyLink={`/user/job/${job?._id}`}
+                    logoSrc={job?.employer?.companyLogo}
+                    experienceLevel={job?.experienceLevel}
+                  />
+                </div>
               ))}
             </div>
-          </>
+          </section>
         )}
-        {/* Jobs For You Section */}
+
+        {/* Loading State */}
+        {(isLoading || isRecLoading) && (
+          <div className="flex justify-center my-8">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+        )}
+
+        {/* Error State */}
+        {(isError || isRecError) && (
+          <div className="alert alert-error my-8">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Error: {error?.message || "Failed to load jobs"}</span>
+          </div>
+        )}
+
+        {/* Recent Jobs Section */}
         {!isLoading && !isError && (
-          <>
-            <div className="flex items-center w-full my-6">
-              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mx-4">
+          <section>
+            <div className="flex items-center mb-8">
+              <hr className="flex-grow border-t border-base-content/20" />
+              <h2 className="text-2xl font-semibold px-4 text-base-content">
                 Recent Jobs
               </h2>
-              <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+              <hr className="flex-grow border-t border-base-content/20" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {jobs?.map((job) => (
-                <JobCard
+                <div
                   key={job?._id}
-                  title={job?.title}
-                  company={job?.employer?.companyName}
-                  location={job?.location}
-                  jobType={job?.jobType}
-                  description={job?.description}
-                  applyLink={`/user/${job?._id}/apply`}
-                  logoSrc={job?.employer?.companyLogo}
-                />
+                  className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <JobCard
+                    id={job?._id}
+                    title={job?.title}
+                    company={job?.employer?.companyName}
+                    location={job?.location}
+                    jobType={job?.jobType}
+                    salary={job?.salary}
+                    description={job.description}
+                    applyLink={`/user/job/${job?._id}`}
+                    logoSrc={job?.employer?.companyLogo}
+                    experienceLevel={job?.experienceLevel}
+                  />
+                </div>
               ))}
             </div>
-          </>
+          </section>
         )}
       </main>
     </div>

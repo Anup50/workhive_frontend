@@ -79,9 +79,11 @@ const SearchPagee = () => {
                 company={job?.employer?.companyName}
                 location={job?.location}
                 jobType={job?.jobType}
-                description={job?.description}
-                applyLink={`/user/${job?._id}/apply`}
+                salary={job?.salary}
+                description={job.description}
+                applyLink={`/job/user/${job?._id}`}
                 logoSrc={job?.employer?.companyLogo}
+                experienceLevel={job?.experienceLevel}
               />
             ))
           ) : (
