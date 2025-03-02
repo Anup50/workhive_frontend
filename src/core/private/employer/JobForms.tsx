@@ -51,7 +51,7 @@ export default function AddJobPage() {
         setSubmitError(null);
         toast.success("Job created successfully");
         // Redirect to jobs list
-        navigate("/employer/jobs");
+        navigate("/employer");
       } else {
         setSubmitError({
           message: response.data.message || "Failed to create job listing",
