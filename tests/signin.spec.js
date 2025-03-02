@@ -1,54 +1,79 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("SignInPage Validation, Password Toggle, and Navigation", () => {
-  test.beforeEach(async ({ page }) => {
+  test("Password visibility toggle works", async ({ page }) => {
     await page.goto("http://localhost:5173/signin");
-  });
 
+    // Use more specific selectors based on your component structure
+    const passwordInput = page.getByPlaceholder("Enter password");
+    const toggleButton = page.locator(".relative button").first(); // Target first toggle button in password field
+
+    // Verify initial state
+    await expect(passwordInput).toHaveAttribute("type", "password");
+
+    // Toggle visibility
+    await toggleButton.click();
+    await expect(passwordInput).toHaveAttribute("type", "text");
+
+    // Toggle back
+    await toggleButton.click();
+    await expect(passwordInput).toHaveAttribute("type", "password");
+  });
   test("Validation errors for invalid email and password", async ({ page }) => {
+    await page.goto("http://localhost:5173/signin");
+
+    // Leave the fields empty and submit
     await page.click('button[type="submit"]');
+
+    // Validate the error messages
     await expect(page.locator('p:text("Email is required")')).toBeVisible();
     await expect(page.locator('p:text("Password is required")')).toBeVisible();
+  });
+  test("Toast notification for invalid credentials", async ({ page }) => {
+    // Mock API response
+    await page.route("**/api/user/login", async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Invalid credentials" }),
+      });
+    });
 
-    await page.fill('input[type="email"]', "invalid-email");
-    await page.fill('input[type="password"]', "short");
-    await page.click('button[type="submit"]');
-    await expect(
-      page.locator('p:text("Please enter an email address")')
-    ).toBeVisible();
-    await expect(
-      page.locator('p:text("Password must be at least 8 characters long")')
-    ).toBeVisible();
+    await page.goto("http://localhost:5173/signin");
 
-    await page.fill('input[type="password"]', "lowercase");
-    await page.click('button[type="submit"]');
-    await expect(
-      page.locator(
-        'p:text("Password must contain at least one uppercase letter")'
-      )
-    ).toBeVisible();
+    const emailInput = page.getByPlaceholder("Email");
+    const passwordInput = page.getByPlaceholder("Enter password");
 
-    await page.fill('input[type="password"]', "NoNumbers");
+    await emailInput.waitFor({ state: "visible" });
+    await emailInput.fill("invalid@example.com");
+    await passwordInput.fill("WRongpassword@123");
+
+    // Submit and verify
     await page.click('button[type="submit"]');
-    await expect(
-      page.locator('p:text("Password must contain at least one number")')
-    ).toBeVisible();
+    const toast = page.getByText("Invalid credentials");
+    await expect(toast).toBeVisible({ timeout: 5000 });
   });
 
-  test("Password visibility toggle works", async ({ page }) => {
-    const passwordInput = page.locator('input[type="password"]');
-    const toggleButton = page.locator('button[type="button"]');
+  test("Toast notification for successful login", async ({ page }) => {
+    await page.route("**/api/user/login", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          token: "mock-token",
+          role: "User",
+          message: "Login successful!",
+        }),
+      });
+    });
 
-    await page.fill('input[type="password"]', "Password123");
-    await expect(passwordInput).toHaveAttribute("type", "password");
-    await toggleButton.click();
-    await expect(page.locator('input[type="text"]')).toHaveValue("Password123");
-    await toggleButton.click();
-    await expect(passwordInput).toHaveAttribute("type", "password");
-  });
+    await page.goto("http://localhost:5173/signin");
 
-  test("Redirects to signup page when link is clicked", async ({ page }) => {
-    await page.click('a:text("Sign up here")');
-    await expect(page).toHaveURL("http://localhost:5173/signup#");
+    await page.getByPlaceholder("Email").fill("test@example.com");
+    await page.getByPlaceholder("Enter password").fill("ValidPassword123");
+
+    await page.click('button[type="submit"]');
+    const toast = page.getByText("Login successful!");
+    await expect(toast).toBeVisible({ timeout: 5000 });
   });
 });

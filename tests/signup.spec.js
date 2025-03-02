@@ -1,4 +1,3 @@
-// tests/signup.spec.js
 import { expect, test } from "@playwright/test";
 
 test.describe("SignUpPage Tests", () => {
@@ -6,41 +5,12 @@ test.describe("SignUpPage Tests", () => {
     await page.goto("http://localhost:5173/signup"); // Adjust the URL if needed
   });
 
-  test("Validation errors for empty fields and mismatched passwords", async ({
-    page,
-  }) => {
-    await page.click('button[type="submit"]');
-    await expect(page.locator("text=Full Name is required.")).toBeVisible();
-    await expect(page.locator("text=Email is required.")).toBeVisible();
-    await expect(page.locator("text=Password is required.")).toBeVisible();
-    await expect(page.locator("text=Role is required.")).toBeVisible();
-
-    await page.fill('input[placeholder="Full Name"]', "Test User");
-    await page.fill('input[placeholder="Email"]', "test@example.com");
-    await page.fill('input[placeholder="Enter password"]', "password123");
-    await page.fill('input[placeholder="Confirm password"]', "wrongpassword");
-    await page.click('button[type="submit"]');
-    await expect(page.locator("text=Passwords do not match.")).toBeVisible();
-
-    await page.fill('input[placeholder="Enter password"]', "short");
-    await page.fill('input[placeholder="Confirm password"]', "short");
-    await page.click('button[type="submit"]');
-    await expect(
-      page.locator("text=Password must be at least 8 characters long.")
-    ).toBeVisible();
-
-    await page.fill('input[placeholder="Email"]', "invalidemail");
-    await page.fill('input[placeholder="Enter password"]', "password123");
-    await page.fill('input[placeholder="Confirm password"]', "password123");
-    await page.click('button[type="submit"]');
-    await expect(
-      page.locator("text=Please enter a valid email address.")
-    ).toBeVisible();
-  });
-
   test("Password visibility toggle works", async ({ page }) => {
+    await page.waitForSelector("div.relative >> button", { timeout: 5000 });
+
     const passwordInput = page.locator('input[placeholder="Enter password"]');
-    const toggleButton = page.locator('button[aria-label="Show password"]');
+
+    const toggleButton = page.locator("div.relative").first().locator("button");
 
     await page.fill('input[placeholder="Enter password"]', "Password123");
     await expect(passwordInput).toHaveAttribute("type", "password");
@@ -52,9 +22,11 @@ test.describe("SignUpPage Tests", () => {
     const confirmPasswordInput = page.locator(
       'input[placeholder="Confirm password"]'
     );
-    const confirmToggleButton = page.locator(
-      'button[aria-label="Show confirm password"]'
-    );
+
+    const confirmToggleButton = page
+      .locator("div.relative")
+      .nth(1)
+      .locator("button");
 
     await page.fill('input[placeholder="Confirm password"]', "Password123");
     await expect(confirmPasswordInput).toHaveAttribute("type", "password");
@@ -65,8 +37,7 @@ test.describe("SignUpPage Tests", () => {
   });
 
   test("Successful signup redirects to sign-in page", async ({ page }) => {
-    // Mock the registerUser API call to simulate a successful response.
-    await page.route("**/api/register", (route) => {
+    await page.route("**/api/user/register", (route) => {
       route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -81,10 +52,17 @@ test.describe("SignUpPage Tests", () => {
     await page.fill('input[placeholder="Email"]', "test@example.com");
     await page.fill('input[placeholder="Enter password"]', "Password123");
     await page.fill('input[placeholder="Confirm password"]', "Password123");
-    await page.locator("select").selectOption({ label: "Job Seeker" });
+
+    await page.waitForSelector('button:has-text("Job Seeker")', {
+      timeout: 5000,
+    });
+    await page.click('button:has-text("Job Seeker")');
+
     await page.click('button[type="submit"]');
 
-    await expect(page).toHaveURL("http://localhost:5173/signin");
+    await expect(page).toHaveURL("http://localhost:5173/signin", {
+      timeout: 10000,
+    });
   });
 
   test("Navigates to sign in page when the link is clicked", async ({

@@ -1,6 +1,6 @@
 const Hero = () => {
   return (
-    <section className="bg-base-100">
+    <section className="bg-base-100 hero-section">
       <div className="gridmax-w-screen-xl p-4 mx-auto lg:gap-8 xl:gap-0 lg:py-16 flex">
         <div className="lg:col-span-7 pl-6 text-left">
           <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl text-base-content">

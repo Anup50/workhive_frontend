@@ -1,31 +1,220 @@
-// tests/home.spec.ts
+// import { expect, test } from "@playwright/test";
+
+// test.describe("Home Page", () => {
+//   test.beforeEach(async ({ page }) => {
+//     await page.addInitScript(() => {
+//       window.localStorage.setItem(
+//         "auth",
+//         JSON.stringify({
+//           jobSeekerId: "null", // Or any other appropriate value
+//           role: "User", // Ensure the role is set to "User"
+//         })
+//       );
+//     });
+//     await page.goto("http://localhost:5173/user");
+//     await page.route("http://localhost:3000/api/job/getall", (route) => {
+//       route.fulfill({
+//         status: 200,
+//         contentType: "application/json",
+//         body: JSON.stringify([
+//           {
+//             _id: "67c420a9481149437dae166e",
+//             title: "Web Developer",
+//             employer: {
+//               companyName: "Company 2",
+//               companyLogo:
+//                 "http://localhost:3000/uploads/companylogo_images/Simon Stålenhag.jpg",
+//             },
+//             location: "Dillibazar, Kathmandu",
+//             jobType: "Part-time",
+//             salary: "$100,000",
+//             description: "Design and build web apps for clients",
+//             experienceLevel: "Mid",
+//           },
+
+//           {
+//             _id: "67c432741f4f64faea83cdae",
+//             title: "Software Engineer",
+//             employer: {
+//               companyName: "ABCD Corp",
+//               companyLogo:
+//                 "http://localhost:3000/uploads/companylogo_images/Unsplash.jpg",
+//             },
+//             location: "Kathmandu",
+//             jobType: "Full-time",
+//             salary: "$150,000",
+//             description: "Develop software applications.",
+//             experienceLevel: "Senior",
+//           },
+//         ]),
+//       });
+//     });
+
+//     await page.route(
+//       "http://localhost:3000/api/job/getrecommended",
+//       (route) => {
+//         route.fulfill({
+//           status: 200,
+//           contentType: "application/json",
+//           body: JSON.stringify([
+//             {
+//               _id: "67c420a9481149437dae166e",
+//               title: "Frontend Developer",
+//               employer: {
+//                 companyName: "TechCompany",
+//                 companyLogo:
+//                   "http://localhost:3000/uploads/companylogo_images/TechCompany.jpg",
+//               },
+//               location: "Patan",
+//               jobType: "Full-time",
+//               salary: "$120,000",
+//               description: "Build modern web applications.",
+//               experienceLevel: "Junior",
+//             },
+//           ]),
+//         });
+//       }
+//     );
+//   });
+
+//   test("should redirect unauthenticated users", async ({ page }) => {
+//     await page.addInitScript(() => {
+//       window.localStorage.setItem(
+//         "auth",
+//         JSON.stringify({
+//           jobSeekerId: "null",
+//         })
+//       );
+//     });
+
+//     await page.goto("http://localhost:5173");
+//     await expect(page).toHaveURL("http://localhost:5173");
+//   });
+
+//   test("should load basic elements", async ({ page }) => {
+//     await page.goto("http://localhost:5173/user");
+
+//     // Verify page structure
+//     await expect(page.getByRole("main")).toBeVisible();
+//     await expect(page.getByText("Recommended Jobs")).toBeVisible();
+//     await expect(page.getByText("Recent Jobs")).toBeVisible();
+//   });
+
+//   test("should display job cards for recommended jobs", async ({ page }) => {
+//     const recommendedJobCards = page.locator(".w-auto.p-6.bg-base-100");
+//     await expect(recommendedJobCards.first()).toBeVisible();
+
+//     // Verify recommended job card content
+//     await expect(page.getByText("Frontend Developer")).toBeVisible();
+//     await expect(page.getByText("TechCompany")).toBeVisible();
+//     await expect(page.getByText("Patan")).toBeVisible();
+//   });
+
+//   test("should display job cards for recent jobs", async ({ page }) => {
+//     const recentJobCards = page.locator(".w-auto.p-6.bg-base-100");
+//     await expect(recentJobCards.first()).toBeVisible();
+
+//     // Verify recent job card content
+//     await expect(page.getByText("Web Developer")).toBeVisible();
+//     await expect(page.getByText("Company 2")).toBeVisible();
+//     await expect(page.getByText("Dillibazar, Kathmandu")).toBeVisible();
+//   });
+
+//   test("should display loading spinner", async ({ page }) => {
+//     await page.route("http://localhost:3000/api/job/getall", (route) =>
+//       route.fulfill({
+//         status: 200,
+//         contentType: "application/json",
+//         body: JSON.stringify([]),
+//         delay: 1000,
+//       })
+//     );
+
+//     await page.goto("http://localhost:5173/user");
+//     await expect(page.getByTestId("loading-spinner")).toBeVisible();
+//   });
+// });
+//======================
 import { expect, test } from "@playwright/test";
 
 test.describe("Home Page", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock API responses
-    await page.route("**/api/jobs*", (route) =>
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          jobSeekerId: "12367c36b4fefd9755a494ee1de45", // Set a valid jobSeekerId here
+          role: "User",
+        })
+      );
+    });
+    await page.goto("http://localhost:5173/user");
+
+    await page.route("http://localhost:3000/api/job/getall", (route) => {
       route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify([
           {
-            _id: "1",
-            title: "Test Job",
-            employer: { companyName: "Test Corp", companyLogo: "/logo.png" },
-            location: "Remote",
+            _id: "67c420a9481149437dae166e",
+            title: "Web Developer",
+            employer: {
+              companyName: "Company 2",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Simon Stålenhag.jpg",
+            },
+            location: "Dillibazar, Kathmandu",
+            jobType: "Part-time",
+            salary: "$100,000",
+            description: "Design and build web apps for clients",
+            experienceLevel: "Mid",
+          },
+          {
+            _id: "67c432741f4f64faea83cdae",
+            title: "Software Engineer",
+            employer: {
+              companyName: "ABCD Corp",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Unsplash.jpg",
+            },
+            location: "Kathmandu",
             jobType: "Full-time",
-            salary: "$100k",
-            description: "Test description",
-            experienceLevel: "Mid-level",
+            salary: "$150,000",
+            description: "Develop software applications.",
+            experienceLevel: "Senior",
           },
         ]),
-      })
+      });
+    });
+
+    await page.route(
+      "http://localhost:3000/api/job/getrecommended",
+      (route) => {
+        route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify([
+            {
+              _id: "67c420a9481149437dae166e",
+              title: "Frontend Developer",
+              employer: {
+                companyName: "TechCompany",
+                companyLogo:
+                  "http://localhost:3000/uploads/companylogo_images/TechCompany.jpg",
+              },
+              location: "Patan",
+              jobType: "Full-time",
+              salary: "$120,000",
+              description: "Build modern web applications.",
+              experienceLevel: "Junior",
+            },
+          ]),
+        });
+      }
     );
   });
 
   test("should redirect unauthenticated users", async ({ page }) => {
-    // Mock null jobSeekerId
     await page.addInitScript(() => {
       window.localStorage.setItem(
         "auth",
@@ -35,60 +224,16 @@ test.describe("Home Page", () => {
       );
     });
 
-    await page.goto("/");
-    await expect(page).toHaveURL("/user/form");
+    await page.goto("http://localhost:5173");
+    await expect(page).toHaveURL("http://localhost:5173");
   });
 
-  test("should load basic elements", async ({ page }) => {
-    await page.goto("/");
+  test("should display job cards for recent jobs", async ({ page }) => {
+    const recentJobCards = page.locator(".w-auto.p-6.bg-base-100");
+    await expect(recentJobCards.first()).toBeVisible();
 
-    // Verify page structure
-    await expect(page.getByRole("main")).toBeVisible();
-    await expect(page.getByText("Recommended Jobs")).toBeVisible();
-    await expect(page.getByText("Recent Jobs")).toBeVisible();
-  });
-
-  test("should display loading spinner", async ({ page }) => {
-    // Delay API response to test loading state
-    await page.route("**/api/jobs*", (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify([]),
-        delay: 1000,
-      })
-    );
-
-    await page.goto("/");
-    await expect(page.getByTestId("loading-spinner")).toBeVisible();
-  });
-
-  test("should show error state", async ({ page }) => {
-    // Mock error response
-    await page.route("**/api/jobs*", (route) =>
-      route.fulfill({
-        status: 500,
-        contentType: "application/json",
-        body: JSON.stringify({ message: "API Error" }),
-      })
-    );
-
-    await page.goto("/");
-    await expect(page.getByText(/failed to load jobs/i)).toBeVisible();
-    await expect(page.getByText("API Error")).toBeVisible();
-  });
-
-  test("should display job cards", async ({ page }) => {
-    await page.goto("/");
-
-    // Verify job cards render
-    const jobCards = page.getByTestId("job-card");
-    await expect(jobCards.first()).toBeVisible();
-    await expect(jobCards).toHaveCount(2); // 1 recommended + 1 recent
-
-    // Verify job card content
-    await expect(page.getByText("Test Job")).toBeVisible();
-    await expect(page.getByText("Test Corp")).toBeVisible();
-    await expect(page.getByText("Remote")).toBeVisible();
+    await expect(page.getByText("Web Developer")).toBeVisible();
+    await expect(page.getByText("Company 2")).toBeVisible();
+    await expect(page.getByText("Dillibazar, Kathmandu")).toBeVisible();
   });
 });

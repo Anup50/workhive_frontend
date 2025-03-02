@@ -196,6 +196,7 @@ const SignUpPage = () => {
 
             <button
               type="submit"
+              data-testid="signup-button"
               className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600"
             >
               Sign up

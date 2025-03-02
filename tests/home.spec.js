@@ -1,57 +1,146 @@
-// tests/home.spec.js
+// import { expect, test } from "@playwright/test";
+
+// test.describe("HomePage", () => {
+//   test("should display required sections on homepage", async ({ page }) => {
+//     await page.goto("http://localhost:5173");
+
+//     await expect(page.locator("text=WorkHive")).toBeVisible();
+//   });
+// });
+// test("displays Hero component", async ({ page }) => {
+//   const heroSection = page.locator(".hero-section");
+
+//   await expect(heroSection).toBeVisible();
+
+//   const heroHeading = heroSection.locator("h1");
+//   await expect(heroHeading).toBeVisible();
+
+//   const getStartedButton = heroSection.locator("button.btn-primary");
+//   await expect(getStartedButton).toBeVisible();
+// });
 import { expect, test } from "@playwright/test";
 
 test.describe("Home Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("http://localhost:5173/"); // Adjust the URL if needed
+    await page.goto("http://localhost:5173/");
+
+    await page.route("http://localhost:3000/api/job/getall", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify([
+          {
+            _id: "67c420a9481149437dae166e",
+            title: "Web Developer",
+            employer: {
+              companyName: "Company 2",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Simon StÃ¥lenhag Wallpapers-THE LABYRINTH -2020- - l_fb_11.jpg",
+            },
+            location: "Dillibazar, Kathmandu",
+            jobType: "Part-time",
+            salary: "$100,000",
+            description: "TO design and build webapps for clients",
+            experienceLevel: "Mid",
+          },
+          {
+            _id: "67c4226b481149437dae16aa",
+            title: "Mobile App Tester",
+            employer: {
+              companyName: "Company 1",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Simon StÃ¥lenhag Wallpapers-THE LABYRINTH -2020- - l_fb_11.jpg",
+            },
+            location: "Kathmandu",
+            jobType: "Part-time",
+            salary: "$1,000,000",
+            description: "To test mobile apps for external clients",
+            experienceLevel: "Entry",
+          },
+          {
+            _id: "67c432741f4f64faea83cdae",
+            title: "Web Developer",
+            employer: {
+              companyName: "ABCD Comp",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Unsplash Wallpapers-Thu Jan 18 2024.jpg",
+            },
+            location: "Kathmandu",
+            jobType: "Full-time",
+            salary: "$200,000",
+            description:
+              "Web developer Web developer Web developer Web developer ",
+            experienceLevel: "Mid",
+          },
+          {
+            _id: "67c44777b6e8e6f4f3d6376e",
+            title: "Web App Developer",
+            employer: {
+              companyName: "ABCD Company",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Unsplash Wallpapers-Thu Jan 18 2024.jpg",
+            },
+            location: "Dillibazar, Kathmandu",
+            jobType: "Full-time",
+            salary: "$3,000,000",
+            description:
+              "Web App Developer Web App Developer Web App Developer Web App Developer",
+            experienceLevel: "Entry",
+          },
+          {
+            _id: "67c4496eb6e8e6f4f3d63824",
+            title: "Mobile App Developer",
+            employer: {
+              companyName: "ABCDE Company",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Unsplash Wallpapers-Thu Jan 18 2024.jpg",
+            },
+            location: "Kathmandu",
+            jobType: "Full-time",
+            salary: "$1,000,000",
+            description: "Developer required to design and build mobile apps",
+            experienceLevel: "Mid",
+          },
+          {
+            _id: "67c44c8ab6e8e6f4f3d6393f",
+            title: "Web App Developer",
+            employer: {
+              companyName: "Andy Company",
+              companyLogo:
+                "http://localhost:3000/uploads/companylogo_images/Unsplash Wallpapers-Thu Jan 18 2024.jpg",
+            },
+            location: "Kathmandu",
+            jobType: "Full-time",
+            salary: "$200,000",
+            description: "Developer needed for deploying websites",
+            experienceLevel: "Mid",
+          },
+        ]),
+      });
+    });
   });
 
-  test('displays "Recent Jobs" heading', async ({ page }) => {
+  test("displays Hero component", async ({ page }) => {
+    const heroSection = page.locator(".hero-section");
+    await expect(heroSection).toBeVisible();
+
+    const heroHeading = heroSection.locator("h1");
+    await expect(heroHeading).toBeVisible();
+
+    const getStartedButton = heroSection.locator("button.btn-primary");
+    await expect(getStartedButton).toBeVisible();
+  });
+
+  test("displays 'Recent Jobs' heading", async ({ page }) => {
     const recentJobsHeading = page.locator('h2:text("Recent Jobs")');
     await expect(recentJobsHeading).toBeVisible();
   });
 
   test("displays JobCard components", async ({ page }) => {
-    // Mocking the API response is ideal here, but for a basic test:
-    // This assumes that the API will return at least one job.
-    const JobCard = page.locator(".job-card"); // Assuming your JobCard component has a class "job-card"
-    await expect(JobCard).toBeVisible();
-  });
+    const jobCardLocator = page.locator(".w-auto.p-6.bg-base-100");
+    await jobCardLocator.first().waitFor({ state: "visible" });
 
-  test("JobCard components have correct data", async ({ page }) => {
-    // Again, mocking the API response is ideal.
-    // This is a basic example and might need adjustments based on your actual data.
-
-    const jobCard = page.locator(".job-card").first(); // Get the first job card
-
-    // Example assertions (adjust based on your JobCard content)
-    const title = await jobCard.locator(".job-title").textContent(); // Assuming a class "job-title"
-    const company = await jobCard.locator(".company-name").textContent(); // Assuming a class "company-name"
-    const location = await jobCard.locator(".job-location").textContent(); // Assuming a class "job-location"
-
-    // Example checks, replace with actual checks based on how your backend works.
-    expect(title).not.toBeNull();
-    expect(company).not.toBeNull();
-    expect(location).not.toBeNull();
-  });
-
-  test("JobCard apply link is correct", async ({ page }) => {
-    const jobCard = page.locator(".job-card").first();
-    const applyLink = await jobCard.locator("a").getAttribute("href");
-    expect(applyLink).toMatch(/\/job\//); // Check if the link contains /job/
-  });
-
-  test("error state is handled correctly", async ({ page }) => {
-    // Implement a way to simulate error state (e.g., mock the API to return an error).
-    // Example (requires mocking):
-    // await page.route('**/api/jobs', route => {
-    //   route.fulfill({
-    //     status: 500,
-    //     contentType: 'application/json',
-    //     body: JSON.stringify({ error: 'Internal Server Error' }),
-    //   });
-    // });
-    // const errorIndicator = page.locator('.error-indicator'); // Assuming you have an error indicator
-    // await expect(errorIndicator).toBeVisible();
+    const jobCardCount = await jobCardLocator.count();
+    expect(jobCardCount).toBeGreaterThan(0);
   });
 });
