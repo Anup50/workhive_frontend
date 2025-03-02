@@ -1,24 +1,23 @@
 import {
-  AlertCircle,
   Banknote,
-  Bookmark,
   Briefcase,
   Building2,
   CalendarCheck,
   Clock,
   MapPin,
-  Send,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getJob } from "../../Api";
 import Loader from "../../components/Loader";
 import { getDay } from "../../shared/date";
-
+import { Job } from "../../shared/Jobs/Query";
+import SimilarJobs from "./SimilarJob";
 const JobPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [job, setJob] = useState(null);
+  const [job, setJob] = useState<Job | null>(null);
+  // const [employer, setEmployer] = useState<Employer | null>(null);
   const [isApplied, setIsApplied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,9 +47,9 @@ const JobPage = () => {
         {/* Job Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
-            {job.employer?.companyLogo ? (
+            {job?.employer.companyLogo ? (
               <img
-                src={job?.employer?.companyLogo}
+                src={job?.employer.companyLogo}
                 alt={job?.employer?.companyName}
                 className="w-16 h-16 rounded-lg object-contain bg-base-100 p-2"
               />
@@ -73,7 +72,7 @@ const JobPage = () => {
           </div>
           <div className="flex flex-col items-end gap-2">
             <div className="badge badge-lg badge-primary">
-              {getDay(job?.datePosted)}
+              {job?.datePosted ? getDay(job.datePosted) : "Recently posted"}
             </div>
             <div
               className={`badge badge-lg ${
@@ -89,15 +88,15 @@ const JobPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <JobMetaItem
             icon={<MapPin className="w-6 h-6 text-primary" />}
-            text={job.location}
+            text={job?.location}
           />
           <JobMetaItem
             icon={<Briefcase className="w-6 h-6 text-primary" />}
-            text={job.jobType}
+            text={job?.jobType}
           />
           <JobMetaItem
             icon={<Clock className="w-6 h-6 text-primary" />}
-            text={job.experienceLevel}
+            text={job?.experienceLevel}
           />
           <JobMetaItem
             icon={<Banknote className="w-6 h-6 text-primary" />}
@@ -105,7 +104,11 @@ const JobPage = () => {
           />
           <JobMetaItem
             icon={<CalendarCheck className="w-6 h-6 text-primary" />}
-            text={`Apply by ${new Date(job?.deadline).toLocaleDateString()}`}
+            text={
+              job?.deadline
+                ? `Apply by ${new Date(job.deadline).toLocaleDateString()}`
+                : "Rolling applications"
+            }
           />
         </div>
 
@@ -113,10 +116,10 @@ const JobPage = () => {
           <SectionHeader title="Job Description" />
 
           <div>
-            <p>{job.description.summary}</p> {/* ✅ Correct path */}
+            <p>{job?.description.summary}</p> {/* ✅ Correct path */}
             <SectionHeader title="Responsibilities" />
             <ul>
-              {job.description.responsibilities.map((item, index) => (
+              {job?.description.responsibilities.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
             </ul>
@@ -134,7 +137,7 @@ const JobPage = () => {
         </div>
 
         {/* Application Section */}
-        <div className="bg-base-100 rounded-box p-8">
+        {/* <div className="bg-base-100 rounded-box p-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               {isApplied && (
@@ -163,22 +166,32 @@ const JobPage = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
+        <SimilarJobs />
       </div>
     </div>
   );
 };
 
-// Reusable components
-const JobMetaItem = ({ icon, text }) => (
+// Update JobMetaItem with proper props type
+interface JobMetaItemProps {
+  icon: React.ReactNode;
+  text: string;
+}
+
+const JobMetaItem = ({ icon, text }: JobMetaItemProps) => (
   <div className="flex items-center gap-2 bg-base-100 p-4 rounded-box">
     {icon}
     <span>{text}</span>
   </div>
 );
 
-const SectionHeader = ({ title }) => (
+// Update SectionHeader with proper props type
+interface SectionHeaderProps {
+  title: string;
+}
+
+const SectionHeader = ({ title }: SectionHeaderProps) => (
   <h2 className="text-2xl font-bold mb-4">{title}</h2>
 );
-
 export default JobPage;

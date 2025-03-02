@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getJobseeker } from "../../../Api";
+import profileImage from "../../../assets/images/Unsplash Wallpapers-Thu Jan 18 2024.jpg";
 import AboutJobseeker from "../../../components/AboutJobSeeker"; // Create this component
 import AnimationWrapper from "../../../components/AnimationWrapper";
 import { InPageNavigation } from "../../../components/InPageNavigation";
@@ -63,7 +64,7 @@ const JobseekerProfile = () => {
             {/* Profile Picture */}
             <div className="relative group">
               <img
-                src={profilePicture || "/default-avatar.png"}
+                src={profileImage}
                 className="w-48 h-48 bg-green-100 rounded-full md:w-48 md:h-48 lg:w-52 lg:h-52 mb-6 object-cover border-4 border-primary/10"
               />
             </div>

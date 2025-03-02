@@ -109,7 +109,7 @@ const JobSelectionDropdown = ({ onSelectJob }: JobSelectionDropdownProps) => {
         <option value="">Choose a job to manage</option>
         {jobs.map((job) => (
           <option key={job._id} value={job._id}>
-            {job.title} ({job.applicationCount || 0} applications)
+            {job.title}
           </option>
         ))}
       </select>

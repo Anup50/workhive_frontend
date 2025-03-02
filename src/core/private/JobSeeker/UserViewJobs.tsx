@@ -228,9 +228,9 @@ const UserJobPage = () => {
                   {status}
                 </div>
               )}
-              <span className="text-sm opacity-75">
-                {job?.applications?.length || 0} applicants
-              </span>
+              {/* <span className="text-sm opacity-75">
+                {job.applications?.length || 0} applicants
+              </span> */}
             </div>
 
             <div className="flex gap-2">

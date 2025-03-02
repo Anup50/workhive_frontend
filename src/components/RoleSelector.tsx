@@ -6,8 +6,8 @@ type RoleSelectorProps = {
 
 const RoleSelector: React.FC<RoleSelectorProps> = ({ onSelect }) => {
   const roles = {
-    Business: "676f9a6ca2d59fd9940cf2b1",
-    JobSeeker: "676f9a7aa2d59fd9940cf2b3",
+    Business: "67c411ee481149437dae148a",
+    JobSeeker: "67c411ca481149437dae1486",
   };
 
   const [selectedRole, setSelectedRole] = React.useState<string | null>(null);

@@ -6,10 +6,10 @@ const Home: React.FC = () => {
   const { data: jobs, isLoading, isError } = useGetJobs();
 
   return (
-    <div>
+    <div className="min-h-screen bg-base-100 text-base-content ">
       <Hero />
       <div>
-        <main className="w-full p-6">
+        <main className="w-full p-6 ">
           {" "}
           {/* Removed mx-auto */}
           {!isLoading && !isError && (
@@ -30,9 +30,11 @@ const Home: React.FC = () => {
                     company={job?.employer?.companyName}
                     location={job?.location}
                     jobType={job?.jobType}
-                    description={job?.description}
-                    applyLink={`/user/${job?._id}/apply`}
+                    salary={job?.salary}
+                    description={job.description}
+                    applyLink={`/job/${job?._id}`}
                     logoSrc={job?.employer?.companyLogo}
+                    experienceLevel={job?.experienceLevel}
                   />
                 ))}
               </div>

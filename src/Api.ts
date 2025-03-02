@@ -23,11 +23,11 @@ export const getRecommendedJobs = (jobSeekerId: string) => {
 export const getSimilarJobs = (id: string) => {
   return Api.get(`/api/job/getsimilar/${id}`);
 };
-export const createEmployer = (formData: FormData) => {
-  return Api.post("/api/employer/add", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  })
+export const getJobsByEmployerId = async (employerId: string) => {
+  return Api.get(`/api/job/employer/${employerId}`);
+ 
 };
+
 //Search=============================================================================================================================================================
 export const searchEmployer = (query: string) => Api.get(`/api/search/employers/${query}`);
 export const searchJobs = (query: string) => Api.get(`/api/search/jobs/${query}`);
@@ -38,9 +38,15 @@ export const getEmployer = (employerId: string) => {
   console.log("Fetching employer with ID:", employerId);
   return Api.get(`/api/employer/find/${employerId}`);
 };
-
+export const createEmployer = (formData: FormData) => {
+  return Api.post("/api/employer/add", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+};
 //JobSeeker=============================================================================================================================================================
 export const getJobSeekerId = () => Api.get("/api/jobseeker/getJobSeekerId");
+export const getJobseeker = (jobSeekerId: string) => Api.get(`/api/jobseeker/${jobSeekerId}`);
+
 export const createJobSeeker = (payload: { userId: string; bio: string; skills: string[]; location: string; profilePicture: string; }) => Api.post("/api/jobseeker/", payload);
 export const uploadProfileImage = (imageFormData: FormData) => {
   return Api.post("/api/jobseeker/uploadImage", imageFormData, {
@@ -48,13 +54,37 @@ export const uploadProfileImage = (imageFormData: FormData) => {
   })
 };
 //Apply========================================================================================================================================================
-export const Apply = () =>  Api.post("/api/application");
-// Add these to your Api.ts file
-export const checkApplicationStatus = (jobId: string, jobSeekerId: string) => 
-  Api.get(`/api/applications/${jobId}/status?jobseekerId=${jobSeekerId}`);
 
-export const applyToJob = (jobId: string, jobSeekerId: string) =>
-  Api.post(`/api/applications/${jobId}/apply`, { userId: jobSeekerId });
-export const getAppliedJobs = () => Api.get("/api/application/applied-jobs"); 
-export const getApplicantsForJob = (jobId: string) => Api.get(`/api/application/job/${jobId}/applicants`);
+export const checkApplicationStatus = (jobId: string) => 
+  Api.get(`/api/application/isApplied/${jobId}`);
+
+export const applyToJob = (applicationData: { jobId: string | undefined; jobSeekerId: string; message: string; }) =>
+  Api.post("/api/application/", applicationData);
+export const getAppliedJobs = (jobSeekerId: any) => Api.get(`/api/application/appliedjobs/${jobSeekerId}`); 
+export const getApplicantsForJob = (jobId: string) => Api.get(`/api/application/job/${jobId}`);
+
+export const withdrawApplication = (jobId: string) => 
+  Api.delete(`/api/application/job/${jobId}/withdraw`);
+// export const updateApplicationStatus = (applicationId: string, status: string) => 
+//   Api.patch(`/api/applications/${applicationId}/status`, { status });
+export const updateApplicationStatus = (
+  applicationId: string,
+  employerId: string, 
+  status: string
+) => Api.patch(`/api/application/${applicationId}/status`, { employerId, status });
+// Bookmark ========================================================================================================================================================
+export const createBookmark = (data: { jobId: string; jobSeekerId: string }) =>
+  Api.post("/api/bookmark", data);
+
+export const deleteBookmark = (jobId: string, jobSeekerId: string) =>
+  Api.delete(`/api/bookmark/${jobId}/${jobSeekerId}`);
+
+export const getBookmarksByJobSeeker = (jobSeekerId: string) =>
+  Api.get(`/api/bookmark/jobSeeker/${jobSeekerId}`);
+
+export const getBookmarksByJob = (jobId: string) =>
+  Api.get(`/api/bookmark/job/${jobId}`);
+
+export const checkIfBookmarked = (jobId: string, jobSeekerId: string) =>
+  Api.get(`/api/bookmark/isBookmarked/${jobId}/${jobSeekerId}`);
 

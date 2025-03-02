@@ -14,7 +14,7 @@ const SearchPage = () => {
 
   const searchJobsHandler = async () => {
     const response = await searchJobs(query);
-    // Ensure jobs is always an array
+
     const jobs = Array.isArray(response.data) ? response.data : [response.data];
     setJobs(jobs);
   };
@@ -80,7 +80,7 @@ const SearchPage = () => {
                 location={job?.location}
                 jobType={job?.jobType}
                 description={job?.description}
-                applyLink={`/user/${job?._id}/apply`}
+                applyLink={`/job/${job?._id}`}
                 logoSrc={job?.employer?.companyLogo}
               />
             ))

@@ -82,6 +82,10 @@ const SignInPage = lazy(() => import("./core/public/Signin"));
 const SignUpPage = lazy(() => import("./core/public/Signup"));
 const EmployerPage = lazy(() => import("./core/public/EmployerProfile"));
 const User = lazy(() => import("./core/private/JobSeeker/Home"));
+const UserProfile = lazy(
+  () => import("./core/private/JobSeeker/JobSeekerProfile")
+);
+
 const Employer = lazy(() => import("./core/private/employer/Index"));
 const JobseekerForm = lazy(
   () => import("./core/private/JobSeeker/JobseekerForm")
@@ -90,6 +94,12 @@ const EmployerForm = lazy(
   () => import("./core/private/employer/EmployerRegister")
 );
 const JobForm = lazy(() => import("./core/private/employer/JobForms"));
+const ApplicationsPage = lazy(
+  () => import("./core/private/JobSeeker/Application")
+);
+const ManageApplicants = lazy(
+  () => import("./core/private/employer/ManageApplications")
+);
 const UserSearch = lazy(() => import("./core/private/JobSeeker/UserSearch"));
 const Search = lazy(() => import("./shared/Search/SearchPage"));
 const ViewJobs = lazy(() => import("./core/public/ViewJobs"));
@@ -125,12 +135,22 @@ const App: React.FC = () => {
                 <Route element={<PrivateLayout />}>
                   <Route path="/user" element={<User />} />
                   <Route path="/user/form" element={<JobseekerForm />} />
+                  <Route path="/user/profile" element={<UserProfile />} />
+
                   <Route path="/user/job/:id" element={<UserViewJobs />} />
+                  <Route
+                    path="/user/applications"
+                    element={<ApplicationsPage />}
+                  />
 
                   <Route path="/user/search/:query" element={<UserSearch />} />
                   <Route path="/employer" element={<Employer />} />
                   <Route path="/employer/form" element={<EmployerForm />} />
                   <Route path="/employer/add" element={<JobForm />} />
+                  <Route
+                    path="/employer/applications"
+                    element={<ManageApplicants />}
+                  />
                 </Route>
               </Route>
 

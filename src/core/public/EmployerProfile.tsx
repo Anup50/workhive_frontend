@@ -123,13 +123,16 @@ const EmployerProfile = () => {
                   activeJobs.map((job: any) => (
                     <JobCard
                       key={job?._id}
+                      id={job.id}
                       title={job?.title}
                       company={employer_name}
                       location={job?.location}
                       jobType={job?.jobType}
-                      description={job?.description}
-                      applyLink={`/user/${job?._id}/apply`}
+                      description={job?.description.summary}
+                      applyLink={`/job/${job?._id}`}
                       logoSrc={companyLogo}
+                      experienceLevel={job.experienceLevel}
+                      salary={job.salary}
                     />
                   ))
                 ) : (
@@ -143,13 +146,16 @@ const EmployerProfile = () => {
                   allJobs.map((job: any) => (
                     <JobCard
                       key={job?._id}
+                      id={job.id}
                       title={job?.title}
                       company={employer_name}
                       location={job?.location}
                       jobType={job?.jobType}
-                      description={job?.description}
-                      applyLink={`/user/${job?._id}/apply`}
+                      description={job?.description.summary}
+                      applyLink={`/job/${job?._id}`}
                       logoSrc={companyLogo}
+                      experienceLevel={job.experienceLevel}
+                      salary={job.salary}
                     />
                   ))
                 ) : (

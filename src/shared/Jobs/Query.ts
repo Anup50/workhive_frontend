@@ -3,28 +3,31 @@ import axios from "axios";
 import { createJobs, getAllJobs, getRecommendedJobs } from "../../Api";
 
 export interface Employer {
-    _id: string;
+  _id: string;
     companyName: string;
     companyLogo?: string;
     location?: string;
   }
+  export interface JobDescription {
+    summary: string;
+    responsibilities: string[];
+  }
+  
   export interface Job {
     _id: string;
     title: string;
-    description: string;
+    description: JobDescription;  
     location: string;
-    employer: Employer; // Add this line
-    salary?: number;
+    employer: Employer;          
+    salary: number;             
+    jobType: "Full-time" | "Part-time" | "Contract" | "Freelance";
+    experienceLevel: "Entry" | "Mid" | "Senior";  
     skillsRequired: string[];
-    jobType: string;
-    experienceLevel?: 'Entry' | 'Mid' | 'Senior';
-    createdAt: Date;
-    updatedAt: Date;
+    datePosted: Date;            
+    deadline?: Date;            
+    isActive: boolean;
   }
 
-  interface RecommendedJobsParams {
-    jobSeekerId: string;
-  }
 interface ErrorResponse {
   message: string;
 }

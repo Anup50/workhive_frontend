@@ -1,6 +1,7 @@
 import { Bell, Briefcase, FileText } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import profileImage from "../../../assets/images/Unsplash Wallpapers-Thu Jan 18 2024.jpg";
 import ThemeToggle from "../../../components/ThemeToggle";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -23,7 +24,7 @@ const UserNavbar = () => {
   };
   const handleApplicationsClick = () => {
     if (jobSeekerId) {
-      navigate(`user/applications/${jobSeekerId}`); // Add jobSeekerId to route
+      navigate("user/applications"); // Add jobSeekerId to route
       setActiveTab("applications");
     }
   };
@@ -84,7 +85,7 @@ const UserNavbar = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
-              <img alt="Profile" src="" />
+              <img alt="Profile" src={profileImage} />
             </div>
           </div>
           <ul
