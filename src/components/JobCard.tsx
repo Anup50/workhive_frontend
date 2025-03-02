@@ -1,88 +1,114 @@
 import { Bookmark, Briefcase, Globe } from "lucide-react";
-import { useState } from "react";
+import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
+import useBookmark from "../core/public/Bookmark";
 
 interface JobCardProps {
+  id: string;
   title: string;
   company: string;
   location: string;
   jobType: string;
-  description: string;
+  description: {
+    summary: string;
+    responsibilities: string[];
+  };
+  salary: number;
+  experienceLevel: string;
+  logoSrc?: string;
   applyLink: string;
-  logoSrc?: string; // Optional logo prop
 }
 
 export default function JobCard({
+  id: jobId,
   title,
   company,
   location,
   jobType,
-  description,
-  applyLink,
+  description = { summary: "No description available", responsibilities: [] },
+  salary = 0,
+  experienceLevel = "Not specified",
   logoSrc,
+  applyLink,
 }: JobCardProps) {
-  // Default image if no logo is provided
   const defaultLogo = "/default-logo.svg";
+  const { jobSeekerId } = useAuth();
 
-  // State for bookmark button (clicked or not)
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-  // Toggle bookmark state
+  // Use our custom hook to manage bookmark state
+  const { isBookmarked, isLoading, toggleBookmark } = useBookmark(
+    jobId,
+    jobSeekerId
+  );
   const handleBookmarkClick = () => {
-    setIsBookmarked((prev) => !prev);
+    if (!jobSeekerId) {
+      toast.error("Please register as a jobseeker to bookmark jobs");
+      return;
+    }
+    toggleBookmark();
   };
 
   return (
-    <div className="max-w-2xl p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-      {/* Header Section */}
+    <div className="w-auto p-6 bg-base-100 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-base-300">
       <div className="flex justify-between items-start mb-4">
-        {/* Logo on the left */}
         <div className="flex items-center gap-3">
           <img
-            src={logoSrc || defaultLogo} // Use provided logoSrc or fallback to defaultLogo
+            src={logoSrc || defaultLogo}
             alt="Company logo"
-            className="h-8 w-8 object-contain"
+            className="h-8 w-8 object-contain border border-base-300 rounded-lg p-0.5"
           />
           <div>
-            <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-            <p className="text-purple-600 font-medium">{company}</p>
+            <h2 className="text-xl font-semibold text-base-content">{title}</h2>
+            <p className="text-primary font-medium">{company}</p>
           </div>
         </div>
-
-        {/* Bookmark button on the right */}
-        <button onClick={handleBookmarkClick} className="focus:outline-none">
-          <Bookmark
-            className="h-8 w-8"
-            style={{ fill: isBookmarked ? "blue" : "transparent" }} // Default transparent, blue when bookmarked
-          />
+        <button
+          onClick={handleBookmarkClick}
+          disabled={isLoading}
+          className="btn btn-ghost btn-circle hover:bg-base-200"
+        >
+          {isLoading ? (
+            <span className="loading loading-spinner text-primary"></span>
+          ) : (
+            <Bookmark
+              className={`h-6 w-6 transition-colors ${
+                isBookmarked
+                  ? "text-primary fill-primary"
+                  : "text-neutral-content/50 fill-transparent"
+              }`}
+            />
+          )}
         </button>
       </div>
 
-      {/* Job Details */}
-      <div className="flex gap-4 mb-4">
-        <div className="flex items-center text-gray-600">
-          <Globe className="h-5 w-5 mr-1" />
+      <div className="flex flex-wrap gap-4 mb-4">
+        <div className="flex items-center text-base-content">
+          <Globe className="h-5 w-5 mr-1 text-base-content/70" />
           <span>{location}</span>
         </div>
-        <div className="flex items-center text-gray-600">
-          <Briefcase className="h-5 w-5 mr-1" />
+        <div className="flex items-center text-base-content">
+          <Briefcase className="h-5 w-5 mr-1 text-base-content/70" />
           <span>{jobType}</span>
         </div>
+        <div className="flex items-center text-base-content ml-auto">
+          <span className="font-medium">
+            {isNaN(Number(salary)) || salary === null
+              ? "Salary not available"
+              : `$${(Number(salary) / 1000).toFixed(1)}k/yr`}
+          </span>
+        </div>
       </div>
-
-      {/* Description */}
-      <p className="text-gray-700 mb-6 leading-relaxed">{description}</p>
-
-      {/* Footer */}
+      <div className="mb-4">
+        <p className="text-base-content/90 mb-4 leading-relaxed">
+          {description.summary}
+        </p>
+      </div>
       <div className="flex justify-between items-center">
-        <a
-          href={applyLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
-        >
-          Apply now
+        <a href={applyLink} className="btn btn-primary px-4 py-2 rounded-md">
+          View Details
         </a>
-        <span className="text-sm text-gray-500">via {company}</span>
+        <span className="text-sm text-base-content/70">
+          {experienceLevel} Level
+        </span>
       </div>
     </div>
   );
